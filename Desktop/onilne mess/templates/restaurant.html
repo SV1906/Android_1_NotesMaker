@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}User{% endblock %}
+{% block css %}
+	<link rel="stylesheet" type="text/css" href= "{{ url_for('static',filename='style/restaurant.css') }}">
+{% endblock %}
+{% block content %}
+	<div id="carousel" class="w3-center w3-black">
+		{% for img in restaurant.images %}
+			<div class="image_tile">
+				<img src="{{ url_for('send_image', filename=img.image_name) }}" alt="Image not found" height="400px"/>
+			</div>
+		{% endfor %}
+	</div>
+	<div class="w3-center w3-xxxlarge">{{ restaurant.name }}</div>
+	<div class="w3-container">
+		<div class="w3-center w3-margin-top w3-xxlarge w3-text-blue w3-light-grey">Menu</div>
+		{% for item in restaurant.menu.split("| ") %}
+			{% if item.split("~")[0] and item.split("~")[1]%}
+				<div class="w3-card w3-round-large w3-third w3-margin w3-hover-shadow">
+					<div class="w3-container w3-padding">
+						<div class="w3-large">{{ item.split("~")[0]}}</div>
+						<div class="w3-text-green w3-right w3-large">Rs. {{ item.split("~")[1]}}</div>
+					</div>
+					<footer class="w3-container w3-margin-bottom">
+						<input type="submit" name="button_subscribe_{{restaurant.menu.split('| ').index(item)}}" value="Subscribe" class="w3-button w3-blue w3-round-large" />
+					</footer>
+				</div>
+			{% endif %}
+		{% endfor %}
+	</div>
+	<div class="w3-container">
+		<div class="w3-center w3-margin-top w3-xxlarge w3-text-blue w3-light-grey">Info</div>
+		<div class="w3-margin w3-xlarge w3-center">
+			Address: {{restaurant.address}}<br/>
+			Phone: {{restaurant.phone}}<br/>
+			Timings: {{restaurant.timing}}<br/>
+			Tags: {% for tag in restaurant.tags.split(", ") %}
+					<a href="/search?text_query_name={{tag}}" class=" w3-button w3-red w3-round-large w3-padding-small">{{tag}}</a>
+				{% endfor %}
+{% endblock %}
