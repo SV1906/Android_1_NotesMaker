@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1547345264/NotesMaker.iml" filepath="$PROJECT_DIR$/.idea/modules/-1547345264/NotesMaker.iml" group="NotesMaker" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/app.iml" filepath="$PROJECT_DIR$/.idea/app.iml" group="NotesMaker/app" />
+    </modules>
+  </component>
+</project>
