@@ -28,7 +28,7 @@ public class NotesActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_STORAGE_PERMISSION = 1;
     private static final int REQUEST_CODE_SELECT_IMAGE = 1;
     private static final int REQUEST_CODE_SELECT_DOC = 10;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int REQUEST_IMAGE_CAPTURE = 2;
     TextView textView;
 
     @Override
