@@ -14,6 +14,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -133,6 +134,7 @@ public class NotesActivity extends AppCompatActivity {
                         inputStream = getContentResolver().openInputStream(selectedImageUri);
                         Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
 //                        varun u can get the bitmap from here for ocr...
+                        getTextFromBitmap(bitmap);
 
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
@@ -177,13 +179,14 @@ public class NotesActivity extends AppCompatActivity {
                 text += block.getText() + "\n";
             }
 
-            previewText(text);
-
+//            previewText(text);
+            Log.d("img00", text);
             //Use the text from here aditya
+            
         }
     }
 
-    private void previewText(String string){
-        textView.setText(string);
-    }
+//    private void previewText(String string){
+//        textView.setText(string);
+//    }
 }
