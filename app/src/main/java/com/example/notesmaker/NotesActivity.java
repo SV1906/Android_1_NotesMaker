@@ -14,14 +14,22 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.text.FirebaseVisionText;
+import com.google.firebase.ml.vision.text.FirebaseVisionTextDetector;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.List;
 
 public class NotesActivity extends AppCompatActivity {
 
@@ -126,6 +134,7 @@ public class NotesActivity extends AppCompatActivity {
                         inputStream = getContentResolver().openInputStream(selectedImageUri);
                         Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
 //                        varun u can get the bitmap from here for ocr...
+                        getTextFromBitmap(bitmap);
 
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
@@ -145,9 +154,39 @@ public class NotesActivity extends AppCompatActivity {
 
     private void getTextFromBitmap(Bitmap imageBitmap) {
         //Enter your code from here Varun
+        FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(imageBitmap);
+        FirebaseVisionTextDetector textDetector = FirebaseVision.getInstance().getVisionTextDetector();
+        textDetector.detectInImage(image).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+            @Override
+            public void onSuccess(FirebaseVisionText firebaseVisionText) {
+                displayTextFromImage(firebaseVisionText);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(NotesActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    private void previewText(String string){
-        textView.setText(string);
+    private void displayTextFromImage(FirebaseVisionText firebaseVisionText) {
+        List<FirebaseVisionText.Block> blockList = firebaseVisionText.getBlocks();
+        String text = "";
+        if(blockList.size() == 0){
+            Toast.makeText(this, "No Text found in image", Toast.LENGTH_SHORT).show();
+        }else{
+            for (FirebaseVisionText.Block block : firebaseVisionText.getBlocks()){
+                text += block.getText() + "\n";
+            }
+
+//            previewText(text);
+            Log.d("img00", text);
+            //Use the text from here aditya
+            
+        }
     }
+
+//    private void previewText(String string){
+//        textView.setText(string);
+//    }
 }
