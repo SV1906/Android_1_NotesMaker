@@ -30,6 +30,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     implementation 'com.google.firebase:firebase-auth:16.0.5'
+    implementation 'com.google.firebase:firebase-ml-vision:15.0.0'
     implementation 'com.getbase:floatingactionbutton:1.10.1'
     implementation files('../itextg-5.5.10.jar')
     testImplementation 'junit:junit:4.12'
