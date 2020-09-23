@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -182,7 +183,12 @@ public class NotesActivity extends AppCompatActivity {
 //            previewText(text);
             Log.d("img00", text);
             //Use the text from here aditya
-            
+
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyPdf";
+
+            PDF pdf = new PDF();
+            pdf.addParagraph(text);
+            pdf.makeDocument(path);
         }
     }
 

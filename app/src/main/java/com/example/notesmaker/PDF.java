@@ -15,6 +15,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 
 //Use this class to create a PDF object.
@@ -54,7 +57,7 @@ class PDF {
             if(!dir.exists())
                 dir.mkdirs();
 
-            File file = new File(dir, "newFile.pdf");
+            File file = new File(dir, getName());
             FileOutputStream fOut = new FileOutputStream(file);
 
             PdfWriter.getInstance(document, fOut);
@@ -93,5 +96,13 @@ class PDF {
         } finally {
             document.close();
         }
+    }
+
+    String getName(){;
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss", Locale.ENGLISH);
+        Date now = new Date();
+
+        String name = ("Document_" + formatter.format(now) + ".pdf");
+        return name;
     }
 }
