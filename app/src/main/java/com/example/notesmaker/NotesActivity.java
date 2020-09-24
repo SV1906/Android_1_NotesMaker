@@ -2,17 +2,21 @@ package com.example.notesmaker;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -180,9 +184,34 @@ public class NotesActivity extends AppCompatActivity {
             }
 
 //            previewText(text);
-            Log.d("img00", text);
+//            Log.d("chk", text);
             //Use the text from here aditya
-            
+
+            if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+                String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyPdf";
+
+                PDF pdf = new PDF();
+                pdf.addParagraph(text);
+                pdf.makeDocument(path);
+
+                Toast.makeText(this, "Note Saved as a PDF in " + path, Toast.LENGTH_SHORT).show();
+
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if(shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+                    AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                    alert.setTitle("Storage Permission Needed");
+                    alert.setMessage("We need storage permission to store the PDF on your device. Please grant storage permission.");
+                    alert.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 01);
+                        }
+                    });
+                    alert.show();
+                } else {
+                    requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 01);
+                }
+            }
         }
     }
 
