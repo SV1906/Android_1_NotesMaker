@@ -184,7 +184,7 @@ public class NotesActivity extends AppCompatActivity {
             }
 
 //            previewText(text);
-            Log.d("img00", text);
+//            Log.d("chk", text);
             //Use the text from here aditya
 
             if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
@@ -193,6 +193,8 @@ public class NotesActivity extends AppCompatActivity {
                 PDF pdf = new PDF();
                 pdf.addParagraph(text);
                 pdf.makeDocument(path);
+
+                Toast.makeText(this, "Note Saved as a PDF in " + path, Toast.LENGTH_SHORT).show();
 
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if(shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)){
