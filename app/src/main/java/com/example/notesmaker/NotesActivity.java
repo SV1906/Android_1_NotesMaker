@@ -1,12 +1,5 @@
 package com.example.notesmaker;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,8 +13,16 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -30,10 +31,14 @@ import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextDetector;
+import com.ml.quaterion.text2summary.Text2Summary;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
+
+import kotlin.jvm.internal.Intrinsics;
+import kotlin.jvm.internal.Ref.ObjectRef;
 
 public class NotesActivity extends AppCompatActivity {
 
@@ -42,13 +47,15 @@ public class NotesActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_SELECT_DOC = 10;
     static final int REQUEST_IMAGE_CAPTURE = 2;
     TextView textView;
+    Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notes);
 
-//        textView = findViewById(R.id.preview_text);
+        button = findViewById(R.id.button4);
+        textView = findViewById(R.id.preview_text);
 
         FloatingActionButton camFab = findViewById(R.id.fab_cam);
         camFab.setOnClickListener(new View.OnClickListener() {
@@ -180,11 +187,11 @@ public class NotesActivity extends AppCompatActivity {
             Toast.makeText(this, "No Text found in image", Toast.LENGTH_SHORT).show();
         }else{
             for (FirebaseVisionText.Block block : firebaseVisionText.getBlocks()){
-                text += block.getText() + "\n";
+                 text += block.getText() + "\n";
             }
 
-//            previewText(text);
-//            Log.d("chk", text);
+           // previewText(text);
+          //  Log.d("chk", text);
             //Use the text from here aditya
 
             if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
@@ -195,6 +202,21 @@ public class NotesActivity extends AppCompatActivity {
                 pdf.makeDocument(path);
 
                 Toast.makeText(this, "Note Saved as a PDF in " + path, Toast.LENGTH_SHORT).show();
+                 // Summary
+                final String finalText = text;
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final ObjectRef summary = new ObjectRef();
+                        summary.element = Text2Summary.Companion.summarize(finalText, 0.4F);
+                      //  TV.setText((CharSequence)((String)summary.element));
+                        previewText((String)summary.element);
+
+                    }
+                });
+
+
+
 
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if(shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)){
@@ -214,8 +236,7 @@ public class NotesActivity extends AppCompatActivity {
             }
         }
     }
-
-//    private void previewText(String string){
-//        textView.setText(string);
-//    }
+   private void previewText(String string){
+        textView.setText(string);
+   }
 }
