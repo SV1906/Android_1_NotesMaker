@@ -55,26 +55,26 @@
             android:id="@+id/fab_cam"
             app:fab_title="Add a note from camera"/>
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:fab_colorNormal="@color/white"
-            app:fab_colorPressed="@color/white_pressed"
-            app:fab_size="mini"
-            app:fab_icon="@drawable/ic_baseline_insert_drive_file_24"
-            android:id="@+id/fab_doc"
-            app:fab_title="Add a note from document"/>
+<!--        <com.getbase.floatingactionbutton.FloatingActionButton-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:fab_colorNormal="@color/white"-->
+<!--            app:fab_colorPressed="@color/white_pressed"-->
+<!--            app:fab_size="mini"-->
+<!--            app:fab_icon="@drawable/ic_baseline_insert_drive_file_24"-->
+<!--            android:id="@+id/fab_doc"-->
+<!--            app:fab_title="Add a note from document"/>-->
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
-    <Button
-        android:id="@+id/button4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="15dp"
-        android:text="Summary" />
+<!--    <Button-->
+<!--        android:id="@+id/button4"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentTop="true"-->
+<!--        android:layout_alignParentEnd="true"-->
+<!--        android:layout_marginTop="5dp"-->
+<!--        android:layout_marginEnd="15dp"-->
+<!--        android:text="Summary" />-->
 
 </RelativeLayout>

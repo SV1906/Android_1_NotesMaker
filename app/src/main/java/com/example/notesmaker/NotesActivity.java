@@ -11,9 +11,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,7 +37,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
 
-import kotlin.jvm.internal.Intrinsics;
 import kotlin.jvm.internal.Ref.ObjectRef;
 
 public class NotesActivity extends AppCompatActivity {
@@ -47,14 +46,14 @@ public class NotesActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_SELECT_DOC = 10;
     static final int REQUEST_IMAGE_CAPTURE = 2;
     TextView textView;
-    Button button;
+//    Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notes);
-
-        button = findViewById(R.id.button4);
+//
+//        button = findViewById(R.id.button4);
         textView = findViewById(R.id.preview_text);
 
         FloatingActionButton camFab = findViewById(R.id.fab_cam);
@@ -91,15 +90,15 @@ public class NotesActivity extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton docFab = findViewById(R.id.fab_doc);
-        docFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent myFileIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                myFileIntent.setType("*/*");
-                startActivityForResult(myFileIntent, REQUEST_CODE_SELECT_DOC);
-            }
-        });
+//        FloatingActionButton docFab = findViewById(R.id.fab_doc);
+//        docFab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent myFileIntent = new Intent(Intent.ACTION_GET_CONTENT);
+//                myFileIntent.setType("*/*");
+//                startActivityForResult(myFileIntent, REQUEST_CODE_SELECT_DOC);
+//            }
+//        });
     }
 
     private void selectImage() {
@@ -159,6 +158,7 @@ public class NotesActivity extends AppCompatActivity {
 
         if(requestCode == REQUEST_CODE_SELECT_DOC && resultCode == RESULT_OK){
             // doc code will go here ...
+
         }
 
     }
@@ -180,6 +180,7 @@ public class NotesActivity extends AppCompatActivity {
         });
     }
 
+
     private void displayTextFromImage(FirebaseVisionText firebaseVisionText) {
         List<FirebaseVisionText.Block> blockList = firebaseVisionText.getBlocks();
         String text = "";
@@ -194,49 +195,91 @@ public class NotesActivity extends AppCompatActivity {
           //  Log.d("chk", text);
             //Use the text from here aditya
 
-            if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
-                String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyPdf";
+            // Dialog box
+            // Initializing a dialog box
+            final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(NotesActivity.this);
+            View mView = getLayoutInflater().inflate(R.layout.dialog, null);
 
-                PDF pdf = new PDF();
-                pdf.addParagraph(text);
-                pdf.makeDocument(path);
+            // declaring edit text\
+            final EditText editText = mView.findViewById(R.id.edit_text);
 
-                Toast.makeText(this, "Note Saved as a PDF in " + path, Toast.LENGTH_SHORT).show();
-                 // Summary
-                final String finalText = text;
-                button.setOnClickListener(new View.OnClickListener() {
+            // setting view
+            builder.setView(mView);
+//
+//            // prevents off screen touches
+            builder.setCancelable(false);
+
+            final String copiedText = text;
+            editText.setText(copiedText);
+
+
+            builder.setNeutralButton("Summarize & Save", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dlg, int sumthin) {
+                    String finalText = summarizeText(copiedText);
+                    saveToPDF(finalText);
+                }
+            });
+
+            builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    String finalText = editText.getText().toString();
+                    saveToPDF(finalText);
+
+                }
+            });
+
+            // setting neg btn
+            builder.setNegativeButton("Discard", null);
+
+            //show
+            builder.show();
+
+        }
+    }
+
+    private void saveToPDF(String text)
+    {
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyPdf";
+
+            PDF pdf = new PDF();
+            pdf.addParagraph(text);
+            pdf.makeDocument(path);
+
+            Toast.makeText(this, "Note Saved as a PDF in " + path, Toast.LENGTH_SHORT).show();
+
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+                AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                alert.setTitle("Storage Permission Needed");
+                alert.setMessage("We need storage permission to store the PDF on your device. Please grant storage permission.");
+                alert.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        final ObjectRef summary = new ObjectRef();
-                        summary.element = Text2Summary.Companion.summarize(finalText, 0.4F);
-                      //  TV.setText((CharSequence)((String)summary.element));
-                        previewText((String)summary.element);
-
+                    public void onClick(DialogInterface dialog, int which) {
+                        requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 01);
                     }
                 });
-
-
-
-
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if(shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)){
-                    AlertDialog.Builder alert = new AlertDialog.Builder(this);
-                    alert.setTitle("Storage Permission Needed");
-                    alert.setMessage("We need storage permission to store the PDF on your device. Please grant storage permission.");
-                    alert.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 01);
-                        }
-                    });
-                    alert.show();
-                } else {
-                    requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 01);
-                }
+                alert.show();
+            } else {
+                requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 01);
             }
         }
     }
-   private void previewText(String string){
-        textView.setText(string);
-   }
+
+    private String summarizeText(String text)
+    {
+
+        final ObjectRef summary = new ObjectRef();
+        summary.element = Text2Summary.Companion.summarize(text, 0.4F);
+        //  TV.setText((CharSequence)((String)summary.element));
+//        previewText((String)summary.element);
+
+
+        return (String)summary.element;
+    }
+
+//   private void previewText(String string){
+//        textView.setText(string);
+//   }
 }
