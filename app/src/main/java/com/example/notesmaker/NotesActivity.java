@@ -202,7 +202,8 @@ public class NotesActivity extends AppCompatActivity {
 
             // declaring edit text\
             final EditText editText = mView.findViewById(R.id.edit_text);
-
+            final Button button = mView.findViewById(R.id.button);
+            final Button button2 = mView.findViewById(R.id.button2);
             // setting view
             builder.setView(mView);
 //
@@ -212,15 +213,20 @@ public class NotesActivity extends AppCompatActivity {
             final String copiedText = text;
             editText.setText(copiedText);
 
-
-            builder.setNeutralButton("Summarize & Save", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dlg, int sumthin) {
+            button.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
                     String finalText = summarizeText(copiedText);
-                    saveToPDF(finalText);
+                    editText.setText(finalText);
                 }
             });
 
-            builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            button2.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    editText.setText(copiedText);
+                }
+            });
+
+            builder.setPositiveButton("Save as PDF", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     String finalText = editText.getText().toString();
