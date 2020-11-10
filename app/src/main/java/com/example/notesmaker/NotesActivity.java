@@ -241,13 +241,20 @@ public class NotesActivity extends AppCompatActivity {
     private void saveToPDF(String text)
     {
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
-            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyPdf";
 
-            PDF pdf = new PDF();
-            pdf.addParagraph(text);
-            pdf.makeDocument(path);
+            if(text.isEmpty())
+            {
+                Toast.makeText(this, "Nothing to save, Text is empty", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyPdf";
 
-            Toast.makeText(this, "Note Saved as a PDF in " + path, Toast.LENGTH_SHORT).show();
+                PDF pdf = new PDF();
+                pdf.addParagraph(text);
+                pdf.makeDocument(path);
+
+                Toast.makeText(this, "Note Saved as a PDF in " + path, Toast.LENGTH_SHORT).show();
+            }
 
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if(shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)){
