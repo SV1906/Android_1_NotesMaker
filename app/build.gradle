@@ -32,7 +32,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:16.0.5'
     implementation 'com.google.firebase:firebase-ml-vision:15.0.0'
     implementation 'com.getbase:floatingactionbutton:1.10.1'
-    implementation 'com.github.barteksc:android-pdf-viewer:1.6.0'
+    implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
     implementation files('../itextg-5.5.10.jar')
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
