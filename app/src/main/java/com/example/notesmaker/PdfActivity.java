@@ -18,8 +18,19 @@ public class PdfActivity extends AppCompatActivity {
         PDFView pdfView = findViewById(R.id.pdfView);
 
         // get intent here
-        File pdfFile = (File)getIntent().getExtras().get("pdfFile");
-        pdfView.fromFile(pdfFile);
+        String pdfpath = getIntent().getStringExtra("PdfPath");
+        File pdfFile = new File(pdfpath);
+        pdfView.fromFile(pdfFile)
+                .pages(0, 2, 1, 3, 3, 3) // all pages are displayed by default
+                .enableSwipe(true)
+                .enableDoubletap(true)
+                .swipeVertical(false)
+                .defaultPage(1)
+                .showMinimap(false)
+                .enableAnnotationRendering(false)
+                .password(null)
+                .showPageWithAnimation(true)
+                .load();
 
     }
 }

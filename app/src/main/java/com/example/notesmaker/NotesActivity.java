@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -80,8 +81,12 @@ public class NotesActivity extends AppCompatActivity {
             public void onItemClick(int position) {
                 Intent intent = new Intent(NotesActivity.this, PdfActivity.class);
                 // passing current pdf from here
-                File currentPdf =
-                intent.putExtra("pdfFile", currentPdf);
+                String pdfpath = allPdfList[position].getPath();
+
+
+                Log.d("chk", pdfpath);
+
+                intent.putExtra("PdfPath", pdfpath);
                 startActivity(intent);
             }
         });
