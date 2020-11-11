@@ -8,9 +8,9 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyler_view"
+        android:id="@+id/pdfList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"/>
 
 
         <com.getbase.floatingactionbutton.FloatingActionsMenu
@@ -60,7 +60,7 @@
 
 
 
-    </androidx.recyclerview.widget.RecyclerView>
+
 
 
 
