@@ -19,8 +19,7 @@ public class PdfActivity extends AppCompatActivity {
 
 
         // get intent here
-        File pdfFile = getIntent().;
-
+        File pdfFile = (File)getIntent().getExtras().get("currentPdf");
         pdfView.fromFile(pdfFile);
 
     }
