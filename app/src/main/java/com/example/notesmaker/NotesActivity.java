@@ -60,36 +60,7 @@ public class NotesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notes);
 
-        try {
-            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyPdf";
-            File directory = new File(path);
-            File[] allFiles = directory.listFiles();
-            PDFList = findViewById(R.id.pdfList);
-
-            allPdfList = getPDFs(allFiles);
-            pdfListAdapter = new PdfListAdapter(allPdfList);
-            linearLayoutManager = new LinearLayoutManager(this);
-
-            PDFList.setLayoutManager(linearLayoutManager);
-            PDFList.setAdapter(pdfListAdapter);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-
-        pdfListAdapter.setOnItemClickListener(new PdfListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                Intent intent = new Intent(NotesActivity.this, PdfActivity.class);
-                // passing current pdf from here
-                String pdfpath = allPdfList[position].getPath();
-
-
-                Log.d("chk", pdfpath);
-
-                intent.putExtra("PdfPath", pdfpath);
-                startActivity(intent);
-            }
-        });
+        initRecyclerView();
 
 
         FloatingActionButton camFab = findViewById(R.id.fab_cam);
@@ -134,6 +105,39 @@ public class NotesActivity extends AppCompatActivity {
 //                startActivityForResult(myFileIntent, REQUEST_CODE_SELECT_DOC);
 //            }
 //        });
+    }
+
+    private void initRecyclerView() {
+        try {
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyPdf";
+            File directory = new File(path);
+            File[] allFiles = directory.listFiles();
+            PDFList = findViewById(R.id.pdfList);
+
+            allPdfList = getPDFs(allFiles);
+            pdfListAdapter = new PdfListAdapter(allPdfList);
+            linearLayoutManager = new LinearLayoutManager(this);
+
+            PDFList.setLayoutManager(linearLayoutManager);
+            PDFList.setAdapter(pdfListAdapter);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        pdfListAdapter.setOnItemClickListener(new PdfListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Intent intent = new Intent(NotesActivity.this, PdfActivity.class);
+                // passing current pdf from here
+                String pdfpath = allPdfList[position].getPath();
+
+
+                Log.d("chk", pdfpath);
+
+                intent.putExtra("PdfPath", pdfpath);
+                startActivity(intent);
+            }
+        });
     }
 
     private File[] getPDFs(File[] allFiles) {
@@ -307,6 +311,8 @@ public class NotesActivity extends AppCompatActivity {
                 pdf.makeDocument(path);
 
                 Toast.makeText(this, "Note Saved as a PDF in " + path, Toast.LENGTH_SHORT).show();
+
+                initRecyclerView();
             }
 
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
