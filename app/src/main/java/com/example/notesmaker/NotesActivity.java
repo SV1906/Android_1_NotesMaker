@@ -80,7 +80,7 @@ public class NotesActivity extends AppCompatActivity {
             public void onItemClick(int position) {
                 Intent intent = new Intent(NotesActivity.this, PdfActivity.class);
                 // passing current pdf from here
-                File[] currentPdf =
+                File currentPdf = 
                 intent.putExtra("pdfFile", currentPdf);
             }
         });
