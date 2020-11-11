@@ -275,6 +275,7 @@ public class NotesActivity extends AppCompatActivity {
             View mView = getLayoutInflater().inflate(R.layout.dialog, null);
 
             // declaring edit text\
+            final EditText namePdf = mView.findViewById(R.id.name_note);
             final EditText editText = mView.findViewById(R.id.edit_text);
             final Button button = mView.findViewById(R.id.button);
             final Button button2 = mView.findViewById(R.id.button2);
@@ -304,7 +305,8 @@ public class NotesActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     String finalText = editText.getText().toString();
-                    saveToPDF(finalText);
+                    String nameNote = namePdf.getText().toString();
+                    saveToPDF(finalText, nameNote);
 
                 }
             });
@@ -318,7 +320,7 @@ public class NotesActivity extends AppCompatActivity {
         }
     }
 
-    private void saveToPDF(String text)
+    private void saveToPDF(String text, String name)
     {
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
 
@@ -331,7 +333,7 @@ public class NotesActivity extends AppCompatActivity {
 
                 PDF pdf = new PDF();
                 pdf.addParagraph(text);
-                pdf.makeDocument(path);
+                pdf.makeDocument(path, name);
 
                 Toast.makeText(this, "Note Saved as a PDF in " + path, Toast.LENGTH_SHORT).show();
 
