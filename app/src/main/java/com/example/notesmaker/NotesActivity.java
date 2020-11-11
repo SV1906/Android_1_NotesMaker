@@ -23,6 +23,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -33,6 +35,7 @@ import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextDetector;
 import com.ml.quaterion.text2summary.Text2Summary;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
@@ -45,16 +48,30 @@ public class NotesActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_SELECT_IMAGE = 1;
     private static final int REQUEST_CODE_SELECT_DOC = 10;
     static final int REQUEST_IMAGE_CAPTURE = 2;
-    TextView textView;
-//    Button button;
+    RecyclerView PDFList;
+    PdfListAdapter pdfListAdapter;
+    LinearLayoutManager linearLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notes);
-//
-//        button = findViewById(R.id.button4);
-        textView = findViewById(R.id.preview_text);
+
+        try {
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyPdf";
+            File directory = new File(path);
+            File[] allFiles = directory.listFiles();
+            PDFList = findViewById(R.id.pdfList);
+            pdfListAdapter = new PdfListAdapter(getPDFs(allFiles));
+            linearLayoutManager = new LinearLayoutManager(this);
+
+            PDFList.setLayoutManager(linearLayoutManager);
+            PDFList.setAdapter(pdfListAdapter);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+
 
         FloatingActionButton camFab = findViewById(R.id.fab_cam);
         camFab.setOnClickListener(new View.OnClickListener() {
@@ -99,6 +116,18 @@ public class NotesActivity extends AppCompatActivity {
 //                startActivityForResult(myFileIntent, REQUEST_CODE_SELECT_DOC);
 //            }
 //        });
+    }
+
+    private File[] getPDFs(File[] allFiles) {
+        int i = 0;
+        File[] PDFs = new File[allFiles.length];
+        for(File f: allFiles){
+            if (f.isFile() && f.getPath().endsWith(".pdf")){
+                PDFs[i] = f;
+                i++;
+            }
+        }
+        return PDFs;
     }
 
     private void selectImage() {

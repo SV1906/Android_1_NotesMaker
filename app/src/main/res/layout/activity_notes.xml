@@ -6,75 +6,64 @@
     android:layout_height="match_parent"
     tools:context=".NotesActivity">
 
-<!--    text view for checking the ocr model-->
 
-    <TextView
-        android:id="@+id/preview_text"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/pdfList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="66dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:textColor="#000000"
-        android:textSize="20dp" />
+        android:layout_height="match_parent"/>
 
-    <com.getbase.floatingactionbutton.FloatingActionsMenu
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="10dp"
-        app:fab_addButtonColorNormal="@color/pink"
-        app:fab_addButtonColorPressed="@color/pink_pressed"
-        app:fab_addButtonPlusIconColor="@color/white"
-        app:fab_labelStyle="@style/custom_fab"
-        android:layout_alignParentRight="true">
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
+        <com.getbase.floatingactionbutton.FloatingActionsMenu
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_colorNormal="@color/white"
-            app:fab_colorPressed="@color/white_pressed"
-            app:fab_size="mini"
-            app:fab_icon="@drawable/ic_baseline_add_photo_alternate_24"
-            android:id="@+id/fab_image"
-            app:fab_title="Add a note from Image"/>
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="10dp"
+            app:fab_addButtonColorNormal="@color/pink"
+            app:fab_addButtonColorPressed="@color/pink_pressed"
+            app:fab_addButtonPlusIconColor="@color/white"
+            app:fab_labelStyle="@style/custom_fab"
+            android:layout_alignParentRight="true">
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:fab_colorNormal="@color/white"
-            app:fab_colorPressed="@color/white_pressed"
-            app:fab_size="mini"
-            app:fab_icon="@drawable/ic_baseline_add_a_photo_24"
-            android:id="@+id/fab_cam"
-            app:fab_title="Add a note from camera"/>
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_colorNormal="@color/white"
+                app:fab_colorPressed="@color/white_pressed"
+                app:fab_size="mini"
+                app:fab_icon="@drawable/ic_baseline_add_photo_alternate_24"
+                android:id="@+id/fab_image"
+                app:fab_title="Add a note from Image"/>
 
-<!--        <com.getbase.floatingactionbutton.FloatingActionButton-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:fab_colorNormal="@color/white"-->
-<!--            app:fab_colorPressed="@color/white_pressed"-->
-<!--            app:fab_size="mini"-->
-<!--            app:fab_icon="@drawable/ic_baseline_insert_drive_file_24"-->
-<!--            android:id="@+id/fab_doc"-->
-<!--            app:fab_title="Add a note from document"/>-->
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_colorNormal="@color/white"
+                app:fab_colorPressed="@color/white_pressed"
+                app:fab_size="mini"
+                app:fab_icon="@drawable/ic_baseline_add_a_photo_24"
+                android:id="@+id/fab_cam"
+                app:fab_title="Add a note from camera"/>
 
-    </com.getbase.floatingactionbutton.FloatingActionsMenu>
+            <!--        <com.getbase.floatingactionbutton.FloatingActionButton-->
+            <!--            android:layout_width="wrap_content"-->
+            <!--            android:layout_height="wrap_content"-->
+            <!--            app:fab_colorNormal="@color/white"-->
+            <!--            app:fab_colorPressed="@color/white_pressed"-->
+            <!--            app:fab_size="mini"-->
+            <!--            app:fab_icon="@drawable/ic_baseline_insert_drive_file_24"-->
+            <!--            android:id="@+id/fab_doc"-->
+            <!--            app:fab_title="Add a note from document"/>-->
 
-<!--    <Button-->
-<!--        android:id="@+id/button4"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_alignParentTop="true"-->
-<!--        android:layout_alignParentEnd="true"-->
-<!--        android:layout_marginTop="5dp"-->
-<!--        android:layout_marginEnd="15dp"-->
-<!--        android:text="Summary" />-->
+        </com.getbase.floatingactionbutton.FloatingActionsMenu>
+
+
+
+
+
+
+
+
+
 
 </RelativeLayout>
