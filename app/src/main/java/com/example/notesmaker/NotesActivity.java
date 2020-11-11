@@ -80,8 +80,9 @@ public class NotesActivity extends AppCompatActivity {
             public void onItemClick(int position) {
                 Intent intent = new Intent(NotesActivity.this, PdfActivity.class);
                 // passing current pdf from here
-                File currentPdf = 
+                File currentPdf =
                 intent.putExtra("pdfFile", currentPdf);
+                startActivity(intent);
             }
         });
 
@@ -91,7 +92,6 @@ public class NotesActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // amey let ur code go here...
-
                 {
                     Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
