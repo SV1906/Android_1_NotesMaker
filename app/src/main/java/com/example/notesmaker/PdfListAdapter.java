@@ -13,6 +13,17 @@ import java.util.Arrays;
 
 class PdfListAdapter extends RecyclerView.Adapter<PdfListAdapter.PdfViewHolder> {
 
+
+    private OnItemClickListener mListener;
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mListener = listener;
+    }
+
     File[] PDFs;
 
     public PdfListAdapter(File[] PDFs) {
@@ -44,6 +55,19 @@ class PdfListAdapter extends RecyclerView.Adapter<PdfListAdapter.PdfViewHolder> 
         public PdfViewHolder(@NonNull View itemView) {
             super(itemView);
             pdfName = itemView.findViewById(R.id.pdfName);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mListener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            mListener.onItemClick(position);
+                        }
+                    }
+                }
+            });
+
         }
     }
 }
