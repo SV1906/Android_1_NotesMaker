@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:text="Summarize Text"
         android:textColor="@color/colorAccent"
-        android:background="@color/white"
+        android:background="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button2"
         app:layout_constraintHorizontal_bias="0.326"
@@ -35,8 +35,8 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="80dp"
         android:text="Reset Text"
-        android:background="@color/white"
         android:textColor="@color/colorAccent"
+        android:background="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

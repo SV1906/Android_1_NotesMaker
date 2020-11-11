@@ -62,6 +62,20 @@ public class NotesActivity extends AppCompatActivity {
 
         initRecyclerView();
 
+        pdfListAdapter.setOnItemClickListener(new PdfListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Intent intent = new Intent(NotesActivity.this, PdfActivity.class);
+                // passing current pdf from here
+                String pdfpath = allPdfList[position].getPath();
+
+
+                Log.d("chk", pdfpath);
+
+                intent.putExtra("PdfPath", pdfpath);
+                startActivity(intent);
+            }
+        });
 
         FloatingActionButton camFab = findViewById(R.id.fab_cam);
         camFab.setOnClickListener(new View.OnClickListener() {
@@ -115,7 +129,7 @@ public class NotesActivity extends AppCompatActivity {
             PDFList = findViewById(R.id.pdfList);
 
             allPdfList = getPDFs(allFiles);
-            pdfListAdapter = new PdfListAdapter(allPdfList);
+            pdfListAdapter = new PdfListAdapter(NotesActivity.this, allPdfList);
             linearLayoutManager = new LinearLayoutManager(this);
 
             PDFList.setLayoutManager(linearLayoutManager);
@@ -123,21 +137,30 @@ public class NotesActivity extends AppCompatActivity {
         } catch (Exception e){
             e.printStackTrace();
         }
+    }
 
-        pdfListAdapter.setOnItemClickListener(new PdfListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                Intent intent = new Intent(NotesActivity.this, PdfActivity.class);
-                // passing current pdf from here
-                String pdfpath = allPdfList[position].getPath();
-
-
-                Log.d("chk", pdfpath);
-
-                intent.putExtra("PdfPath", pdfpath);
-                startActivity(intent);
-            }
-        });
+    public void deleteNote(final int position)
+    {
+        if(allPdfList[position].exists())
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(NotesActivity.this);
+            builder.setMessage("Do you want to delete this Note?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            allPdfList[position].delete();
+//                            Toast.makeText(this, "Deleted", Toast.LENGTH_SHORT).show();
+                            initRecyclerView();
+                        }
+                    })
+                    .setNegativeButton("No", null);
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
+        else
+        {
+            Toast.makeText(this, "ERROR", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private File[] getPDFs(File[] allFiles) {
