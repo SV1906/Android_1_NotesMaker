@@ -102,7 +102,7 @@ class PDF {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss", Locale.ENGLISH);
         Date now = new Date();
 
-        String pdfName = (name + formatter.format(now) + ".pdf");
+        String pdfName = (name + "_" + formatter.format(now) + ".pdf");
         return pdfName;
     }
 }
