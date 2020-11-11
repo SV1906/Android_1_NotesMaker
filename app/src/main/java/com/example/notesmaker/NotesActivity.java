@@ -48,9 +48,11 @@ public class NotesActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_SELECT_IMAGE = 1;
     private static final int REQUEST_CODE_SELECT_DOC = 10;
     static final int REQUEST_IMAGE_CAPTURE = 2;
+
     RecyclerView PDFList;
     PdfListAdapter pdfListAdapter;
     LinearLayoutManager linearLayoutManager;
+    File[] allPdfList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +64,9 @@ public class NotesActivity extends AppCompatActivity {
             File directory = new File(path);
             File[] allFiles = directory.listFiles();
             PDFList = findViewById(R.id.pdfList);
-            pdfListAdapter = new PdfListAdapter(getPDFs(allFiles));
+
+            allPdfList = getPDFs(allFiles);
+            pdfListAdapter = new PdfListAdapter(allPdfList);
             linearLayoutManager = new LinearLayoutManager(this);
 
             PDFList.setLayoutManager(linearLayoutManager);
@@ -71,6 +75,15 @@ public class NotesActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        pdfListAdapter.setOnItemClickListener(new PdfListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Intent intent = new Intent(NotesActivity.this, PdfActivity.class);
+                // passing current pdf from here
+                File[] currentPdf =
+                intent.putExtra("pdfFile", currentPdf);
+            }
+        });
 
 
         FloatingActionButton camFab = findViewById(R.id.fab_cam);
@@ -311,13 +324,10 @@ public class NotesActivity extends AppCompatActivity {
 
     private String summarizeText(String text)
     {
-
         final ObjectRef summary = new ObjectRef();
         summary.element = Text2Summary.Companion.summarize(text, 0.4F);
         //  TV.setText((CharSequence)((String)summary.element));
 //        previewText((String)summary.element);
-
-
         return (String)summary.element;
     }
 
