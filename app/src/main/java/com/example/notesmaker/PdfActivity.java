@@ -22,14 +22,16 @@ public class PdfActivity extends AppCompatActivity {
         File pdfFile = new File(pdfpath);
         pdfView.fromFile(pdfFile)
                 .pages(0, 2, 1, 3, 3, 3) // all pages are displayed by default
-                .enableSwipe(true)
+                .enableSwipe(true) // allows to block changing pages using swipe
+                .swipeHorizontal(false)
                 .enableDoubletap(true)
-                .swipeVertical(false)
-                .defaultPage(1)
-                .showMinimap(false)
-                .enableAnnotationRendering(false)
+                .defaultPage(0)
+                .enableAnnotationRendering(false) // render annotations (such as comments, colors or forms)
                 .password(null)
-                .showPageWithAnimation(true)
+                .scrollHandle(null)
+                .enableAntialiasing(true) // improve rendering a little bit on low-res screens
+                // spacing between pages in dp. To define spacing color, set view background
+                .spacing(0)
                 .load();
 
     }

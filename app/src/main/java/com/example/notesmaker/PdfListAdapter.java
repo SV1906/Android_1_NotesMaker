@@ -1,8 +1,11 @@
 package com.example.notesmaker;
 
+import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,6 +18,7 @@ class PdfListAdapter extends RecyclerView.Adapter<PdfListAdapter.PdfViewHolder> 
 
 
     private OnItemClickListener mListener;
+    private Context context;
 
     public interface OnItemClickListener {
         void onItemClick(int position);
@@ -26,9 +30,10 @@ class PdfListAdapter extends RecyclerView.Adapter<PdfListAdapter.PdfViewHolder> 
 
     File[] PDFs;
 
-    public PdfListAdapter(File[] PDFs) {
+    public PdfListAdapter(Context context, File[] PDFs) {
         Arrays.sort(PDFs);
         this.PDFs = PDFs;
+        this.context = context;
     }
 
     @NonNull
@@ -51,10 +56,21 @@ class PdfListAdapter extends RecyclerView.Adapter<PdfListAdapter.PdfViewHolder> 
 
     public class PdfViewHolder extends RecyclerView.ViewHolder {
         TextView pdfName;
+        ImageButton deleteBtn;
 
         public PdfViewHolder(@NonNull View itemView) {
             super(itemView);
+
             pdfName = itemView.findViewById(R.id.pdfName);
+            deleteBtn = itemView.findViewById(R.id.delete_btn);
+
+            deleteBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+//                    Log.d("chk","clicked");
+                    ((NotesActivity)context).deleteNote(getAdapterPosition());
+                }
+            });
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
