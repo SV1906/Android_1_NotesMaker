@@ -18,16 +18,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PdfActivity"></activity>
+        <activity android:name=".PdfActivity"/>
         <activity
             android:name=".HomeActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity android:name=".Register" />
         <activity android:name=".MainActivity" />
         <activity
             android:name=".PDF"
             tools:ignore="Instantiatable" />
-        <activity android:name=".NotesActivity">
+        <activity android:name=".NotesActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
