@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="4dp">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/prevLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="10"
+            android:visibility="visible">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="8"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <EditText
+                    android:id="@+id/prevEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="3"
+                    >
+                    <Button
+                        android:id="@+id/prevLayoutSave"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="50dp"
+                        android:text="Save"/>
+                    <Button
+                        android:id="@+id/prevLayoutSummary"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="50dp"
+                        android:text="Summarise"/>
+                    <Button
+                        android:id="@+id/prevLayoutReset"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="50dp"
+                        android:text="Reset"/>
+                </LinearLayout>
+            </LinearLayout>
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="match_parent">
+                <Button
+                    android:id="@+id/prevLayoutDelete"
+                    android:layout_height="60dp"
+                    android:layout_width="60dp"
+                    android:background="@drawable/ic_baseline_delete_forever_24"
+                    android:layout_centerInParent="true"/>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/prevTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/defaultTextColor"
+            android:textSize="20dp"
+            android:visibility="invisible"
+            android:padding="6dp"/>
+    </RelativeLayout>
+
+
+
+</androidx.cardview.widget.CardView>
