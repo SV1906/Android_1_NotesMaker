@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -421,6 +422,54 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         }
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void renameNote(final int adapterPosition) {
+
+
+
+        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(NotesActivity.this);
+        View mView = getLayoutInflater().inflate(R.layout.rename_dialog, null);
+
+        // declaring edit text\
+        final TextView renText = mView.findViewById(R.id.rename_text);
+        final EditText renEdit = mView.findViewById(R.id.rename_edit);
+        // setting view
+        builder.setView(mView);
+
+            // prevents off screen touches
+        builder.setCancelable(false);
+
+        builder.setPositiveButton("Rename", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                String finalText = renEdit.getText().toString() + ".pdf";
+                if(allPdfList[adapterPosition].exists())
+                {
+                    File from = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyPdf",allPdfList[adapterPosition].getName());
+                    File to = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyPdf",finalText);
+                    from.renameTo(to);
+                }
+                initRecyclerView();
+            }
+        });
+
+        // setting neg btn
+        builder.setNegativeButton("Cancel", null);
+
+        //show
+        builder.show();
+
+
+    }
+
+    public void shareNote(int adapterPosition) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("application/pdf");
+        Uri uri = FileProvider.getUriForFile(NotesActivity.this, NotesActivity.this.getPackageName() + ".provider", allPdfList[adapterPosition]);shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(Intent.createChooser(shareIntent, "Share it"));
     }
 
 //   private void previewText(String string){
