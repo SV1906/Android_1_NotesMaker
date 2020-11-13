@@ -11,15 +11,6 @@
 
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:text="   Notes Maker"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textSize="50dp"
-        android:textStyle="bold|italic" />
-
-    <TextView
         android:layout_width="318dp"
         android:layout_height="59dp"
         android:layout_margin="20dp"
@@ -65,5 +56,11 @@
         android:layout_height="wrap_content"
         android:text="New account"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="104dp"
+        android:layout_height="wrap_content"
+        android:text="Resend Verification" />
 </LinearLayout>
 

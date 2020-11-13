@@ -410,6 +410,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
                 break;
             case R.id.nav_logout:
                 Toast.makeText(this, "Log out", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 break;
             case R.id.nav_read:
                 Toast.makeText(this, "Read", Toast.LENGTH_SHORT).show();
