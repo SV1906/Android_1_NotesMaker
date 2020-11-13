@@ -7,12 +7,27 @@
     android:padding="16dp">
 
     <EditText
+        android:id="@+id/name_note"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:gravity="start|top"
+        android:hint="Enter Document Name here"
+        android:inputType="textMultiLine"
+        app:layout_constraintBottom_toTopOf="@+id/edit_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.812"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
         android:id="@+id/edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:gravity="start|top"
         android:inputType="textMultiLine"
+        android:hint="Enter Document Content here"
         app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -23,7 +38,7 @@
         android:layout_height="wrap_content"
         android:text="Summarize Text"
         android:textColor="@color/colorAccent"
-        android:background="@color/white"
+        android:background="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button2"
         app:layout_constraintHorizontal_bias="0.326"
@@ -35,9 +50,10 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="80dp"
         android:text="Reset Text"
-        android:background="@color/white"
         android:textColor="@color/colorAccent"
+        android:background="@null"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

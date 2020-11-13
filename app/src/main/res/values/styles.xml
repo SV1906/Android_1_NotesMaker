@@ -12,9 +12,11 @@
         <item name="android:background">@drawable/fab_label</item>
         <item name="android:textColor">@color/white</item>
     </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="colorPrimary">#b83d0f </item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
 </resources>
