@@ -1,5 +1,7 @@
 package com.example.notesmaker;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -112,6 +114,22 @@ public class PreviewAdapter extends RecyclerView.Adapter<PreviewAdapter.PreviewV
             public void onClick(View v) {
                 holder.mPreviewLinearLayout.setVisibility(View.VISIBLE);
                 holder.mPreviewTextView.setVisibility(View.GONE);
+            }
+        });
+        holder.mPreviewEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mPreviewDataList.get(position).changeText(String.valueOf(s));
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
 
