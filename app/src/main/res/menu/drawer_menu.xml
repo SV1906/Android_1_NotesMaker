@@ -3,20 +3,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group>
+
+    <item android:title="Authentication">
+        <menu>
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/logout"
+                android:title="Log Out" />
+        </menu>
+    </item>
+
+
+
+    <item android:title="Options">
+    <menu>
+
         <item
             android:id="@+id/nav_sync"
             android:icon="@drawable/sync"
-            android:title="Sync Notes" />
+            android:title="Synced Notes" />
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/settings"
             android:title="Settings" />
-        <item
-            android:id="@+id/nav_logout"
-            android:icon="@drawable/logout"
-            android:title="Log Out" />
-    </group>
+    </menu>
+    </item>
 
     <item android:title="About Us">
         <menu>

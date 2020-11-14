@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -63,6 +64,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
     private DrawerLayout drawer;
 
+    NavigationView navigationView;
     RecyclerView PDFList;
     PdfListAdapter pdfListAdapter;
     LinearLayoutManager linearLayoutManager;
@@ -73,6 +75,31 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
     FirebaseStorage storage;
     StorageReference userStorage;
     StorageReference pdfStorage;
+
+    @Override
+    protected void onStart() {
+
+        checkAuthentication();
+        super.onStart();
+    }
+
+    private void checkAuthentication() {
+        Menu menu = navigationView.getMenu();
+
+        MenuItem login = menu.findItem(R.id.nav_logout);
+
+        FirebaseUser mFirebaseUser = mAuth.getCurrentUser();
+        if(mFirebaseUser==null)
+        {
+            login.setTitle("Log In");
+            login.setIcon(getResources().getDrawable(R.drawable.login));
+        }
+        else
+        {
+            login.setTitle("Log Out");
+            login.setIcon(getResources().getDrawable(R.drawable.logout));
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +124,10 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         setSupportActionBar(toolbar);
 
         drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
+
+
+
         navigationView.setNavigationItemSelectedListener(this);
 
 
@@ -441,9 +471,15 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
                 Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_logout:
-                mAuth.signOut();
-                Toast.makeText(this, "Log out", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                if(menuItem.getTitle()=="Log Out")
+                {
+                    mAuth.signOut();
+                    checkAuthentication();
+                }
+                else
+                {
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                }
                 break;
             case R.id.nav_read:
                 Toast.makeText(this, "Read", Toast.LENGTH_SHORT).show();
