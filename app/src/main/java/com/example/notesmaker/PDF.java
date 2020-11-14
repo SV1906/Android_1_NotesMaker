@@ -47,17 +47,18 @@ class PDF {
     }
 
     //Code to make the document
-    public void makeDocument(String path, String name){
+    public File makeDocument(String path, String name){
 
         document = new Document();
-        File dir;
-
+        File dir, file;
+        file = null;
         try {
             dir = new File(path);
             if(!dir.exists())
                 dir.mkdirs();
 
-            File file = new File(dir, getName(name));
+
+            file = new File(dir, getName(name));
             FileOutputStream fOut = new FileOutputStream(file);
 
             PdfWriter.getInstance(document, fOut);
@@ -96,9 +97,11 @@ class PDF {
         } finally {
             document.close();
         }
+
+        return file;
     }
 
-    String getName(String name){;
+    String getName(String name){
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss", Locale.ENGLISH);
         Date now = new Date();
 
