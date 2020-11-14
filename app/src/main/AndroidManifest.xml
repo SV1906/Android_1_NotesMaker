@@ -18,24 +18,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PreviewActivity">
+        <activity android:name=".PreviewActivity"/>
+        <activity
+            android:name=".HomeActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".Register" />
+        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".PDF"
+            tools:ignore="Instantiatable" />
+        <activity android:name=".NotesActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".HomeActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
-        <activity android:name=".Register" />
-        <activity android:name=".MainActivity" />
-        <activity
-            android:name=".PDF"
-            tools:ignore="Instantiatable" />
-        <activity android:name=".NotesActivity">
-
-        </activity>
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"/>
     </application>
 
 </manifest>

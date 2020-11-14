@@ -303,7 +303,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
             // Dialog box
             // Initializing a dialog box
-            final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(NotesActivity.this);
+            /*final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(NotesActivity.this);
             View mView = getLayoutInflater().inflate(R.layout.dialog, null);
 
             // declaring edit text\
@@ -347,7 +347,12 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
             builder.setNegativeButton("Discard", null);
 
             //show
-            builder.show();
+            builder.show();*/
+
+            Intent previewActivity = new Intent(NotesActivity.this, PreviewActivity.class);
+            previewActivity.putExtra("Text", text);
+            startActivity(previewActivity);
+            finish();
 
         }
     }

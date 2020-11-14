@@ -1,17 +1,37 @@
 package com.example.notesmaker;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.text.FirebaseVisionText;
+import com.google.firebase.ml.vision.text.FirebaseVisionTextDetector;
 import com.ml.quaterion.text2summary.Text2Summary;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.nio.BufferUnderflowException;
 import java.util.ArrayList;
+import java.util.List;
 
 import kotlin.jvm.internal.Ref;
 
@@ -19,6 +39,7 @@ public class PreviewActivity extends AppCompatActivity {
     private ArrayList<PreviewData> mPreviewDataList;
     private String originalString;
     private Boolean isSummarised;
+    private Uri imgUri;
 
     private RecyclerView mRecyclerView;
     private PreviewAdapter mAdapter;
@@ -33,6 +54,13 @@ public class PreviewActivity extends AppCompatActivity {
 
         createPreviewDataList();
         buildRecyclerView();
+        Bundle extras = getIntent().getExtras();
+        String text;
+        if (extras != null){
+            text = extras.getString("Text");
+            insertItem(0, text);
+        }
+
 
         buttonAdd = findViewById(R.id.btnAddPara);
         buttonSaveToPDF = findViewById(R.id.btnSavePDF);
@@ -40,14 +68,68 @@ public class PreviewActivity extends AppCompatActivity {
         buttonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int position = mAdapter.getItemCount();
-                insertItem(position);
+                CropImage.startPickImageActivity(PreviewActivity.this);
+                /*if (imgUri != null) {
+                    try {
+                        InputStream inputStream = getContentResolver().openInputStream(imgUri);
+                        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                        getTextFromBitmap(bitmap);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                }*/
+            }
+        });
+        buttonSaveToPDF.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String fullPDFString = "";
+                for (PreviewData data : mPreviewDataList){
+                    fullPDFString += data.getPreviewText() + "\n";
+                }
+                saveToPDF(fullPDFString);
             }
         });
     }
 
-    public void insertItem(int position){
-        mPreviewDataList.add(position, new PreviewData("Wow Epic!"));
+    private void saveToPDF(String fullPDFString) {
+        //Code to save PDF
+    }
+
+    private void getTextFromBitmap(Bitmap bitmap) {
+        FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
+        FirebaseVisionTextDetector textDetector = FirebaseVision.getInstance().getVisionTextDetector();
+        textDetector.detectInImage(image).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+            @Override
+            public void onSuccess(FirebaseVisionText firebaseVisionText) {
+                displayTextFromImage(firebaseVisionText);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(PreviewActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void displayTextFromImage(FirebaseVisionText firebaseVisionText) {
+        List<FirebaseVisionText.Block> blockList = firebaseVisionText.getBlocks();
+        String text = "";
+        if(blockList.size() == 0){
+            Toast.makeText(this, "No Text found in image", Toast.LENGTH_SHORT).show();
+        }else {
+            for (FirebaseVisionText.Block block : firebaseVisionText.getBlocks()) {
+                text += block.getText() + "\n";
+            }
+            int position = mAdapter.getItemCount();
+            insertItem(position, text);
+        }
+    }
+
+
+    public void insertItem(int position, String text){
+        mPreviewDataList.add(position, new PreviewData(text));
         mAdapter.notifyItemInserted(position);
     }
 
@@ -63,9 +145,9 @@ public class PreviewActivity extends AppCompatActivity {
 
     public void createPreviewDataList(){
         mPreviewDataList = new ArrayList<>();
-        mPreviewDataList.add(new PreviewData("Great job!"));
+        /*mPreviewDataList.add(new PreviewData("Great job!"));
         mPreviewDataList.add(new PreviewData("Amazing job!"));
-        mPreviewDataList.add(new PreviewData("Amazing Work!"));
+        mPreviewDataList.add(new PreviewData("Amazing Work!"));*/
     }
 
     public void buildRecyclerView(){
@@ -109,5 +191,33 @@ public class PreviewActivity extends AppCompatActivity {
         return (String)summary.element;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == Activity.RESULT_OK){
+            Uri imageUri = CropImage.getPickImageResultUri(this, data);
+            imgUri = imageUri;
+            startCrop(imageUri);
+        }
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if(resultCode == RESULT_OK){
+                imgUri = result.getUri();
+                if (imgUri != null) {
+                    try {
+                        InputStream inputStream = getContentResolver().openInputStream(imgUri);
+                        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                        getTextFromBitmap(bitmap);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Toast.makeText(this, "Image captured successfully !", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
+    private void startCrop(Uri imageUri) {
+        CropImage.activity(imageUri).setGuidelines(CropImageView.Guidelines.ON).setMultiTouchEnabled(true).start(this);
+    }
 }

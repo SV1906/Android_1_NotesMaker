@@ -98,6 +98,7 @@ public class PreviewAdapter extends RecyclerView.Adapter<PreviewAdapter.PreviewV
     @Override
     public void onBindViewHolder(@NonNull final PreviewViewHolder holder, final int position) {
         PreviewData currentItem = mPreviewDataList.get(position);
+        holder.mPreviewTextView.setText(currentItem.getPreviewText());
         holder.mPreviewEditText.setText(currentItem.getPreviewText());
         holder.mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,11 +125,13 @@ public class PreviewAdapter extends RecyclerView.Adapter<PreviewAdapter.PreviewV
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mPreviewDataList.get(position).changeText(String.valueOf(s));
+
             }
 
             @Override
             public void afterTextChanged(Editable s) {
+//                if (s != null) {
+//                    mPreviewDataList.get(position).changeText(String.valueOf(s));
 
             }
         });
