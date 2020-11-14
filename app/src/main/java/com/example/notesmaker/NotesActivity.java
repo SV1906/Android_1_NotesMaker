@@ -34,6 +34,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -47,12 +48,14 @@ import com.google.firebase.ml.vision.text.FirebaseVisionTextDetector;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ml.quaterion.text2summary.Text2Summary;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import kotlin.jvm.internal.Ref.ObjectRef;
 
 public class NotesActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
@@ -69,6 +72,8 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
     PdfListAdapter pdfListAdapter;
     LinearLayoutManager linearLayoutManager;
     File[] allPdfList;
+
+    FirebaseUser mFirebaseUser;
 
     FirebaseAuth mAuth;
     FirebaseUser mUser;
@@ -88,7 +93,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
         MenuItem login = menu.findItem(R.id.nav_logout);
 
-        FirebaseUser mFirebaseUser = mAuth.getCurrentUser();
+        mFirebaseUser = mAuth.getCurrentUser();
         if(mFirebaseUser==null)
         {
             login.setTitle("Log In");
@@ -118,14 +123,28 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
         PDFList = findViewById(R.id.pdfList);
         initRecyclerView();
-
+        mFirebaseUser = mAuth.getCurrentUser();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
+        View header = navigationView.getHeaderView(0);
+        TextView username = (TextView) header.findViewById(R.id.user_name);
+        TextView useremail = (TextView) header.findViewById(R.id.user_email);
+        CircleImageView image = (CircleImageView) header.findViewById(R.id.profile_image);
+//        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Images");
 
+
+        if(mFirebaseUser!=null)
+        {
+//            Glide.with(this)
+//                    .load(storageReference)
+//                    .into(image);
+            username.setText(mFirebaseUser.getDisplayName());
+            useremail.setText(mFirebaseUser.getEmail());
+        }
 
 
         navigationView.setNavigationItemSelectedListener(this);
