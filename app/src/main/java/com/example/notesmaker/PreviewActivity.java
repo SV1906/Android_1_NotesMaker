@@ -28,10 +28,13 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextDetector;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ml.quaterion.text2summary.Text2Summary;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -62,10 +65,28 @@ public class PreviewActivity extends AppCompatActivity {
     private Button buttonAdd, buttonSaveToPDF;
     private EditText editTextPDFName;
 
+    FirebaseAuth mAuth;
+    FirebaseUser mUser;
+    FirebaseStorage storage;
+    StorageReference userStorage;
+    public static StorageReference pdfStorage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preview);
+
+        mAuth = FirebaseAuth.getInstance();
+
+        FirebaseUser mFirebaseUser = mAuth.getCurrentUser();
+        mUser = mAuth.getCurrentUser();
+
+        if (mUser!=null){
+            storage = FirebaseStorage.getInstance();
+            userStorage = storage.getReference();
+            userStorage = userStorage.child(mUser.getUid());
+            pdfStorage = userStorage.child("PDFs");
+        }
 
         createPreviewDataList();
         buildRecyclerView();
@@ -127,18 +148,18 @@ public class PreviewActivity extends AppCompatActivity {
                 pdf.addParagraph(text);
                 File file = pdf.makeDocument(path, name);
 
-//                if ( mUser!=null){
-//                    if (file != null){
-//                        StorageReference tempFile = pdfStorage.child(file.getName());
-//                        tempFile.putFile(Uri.fromFile(file)).addOnFailureListener(new OnFailureListener() {
-//                            @Override
-//                            public void onFailure(@NonNull Exception e) {
-//
-//                            }
-//                        });
-//                        Log.i("Cloud", "Uploaded");
-//                    }
-//                }
+                if ( mUser!=null){
+                    if (file != null){
+                        StorageReference tempFile = pdfStorage.child(file.getName());
+                        tempFile.putFile(Uri.fromFile(file)).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                            }
+                        });
+                        Log.i("Cloud", "Uploaded");
+                    }
+                }
                 Toast.makeText(this, "Note Saved as a PDF in " + path, Toast.LENGTH_SHORT).show();
 
             }
