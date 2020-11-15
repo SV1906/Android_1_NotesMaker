@@ -532,8 +532,6 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
     public void renameNote(final int adapterPosition) {
 
-
-
         final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(NotesActivity.this);
         View mView = getLayoutInflater().inflate(R.layout.rename_dialog, null);
 

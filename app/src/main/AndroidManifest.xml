@@ -26,6 +26,7 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity android:name=".Register" />
         <activity android:name=".MainActivity" />
+        <activity android:name=".CloudNotes"/>
         <activity
             android:name=".PDF"
             tools:ignore="Instantiatable" />

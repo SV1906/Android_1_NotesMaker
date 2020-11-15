@@ -22,12 +22,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.vision.Frame;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
+import java.io.IOException;
 
 public class CloudNotes extends AppCompatActivity {
 
@@ -83,9 +85,31 @@ public class CloudNotes extends AppCompatActivity {
         pdfStorage.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
             @Override
             public void onSuccess(ListResult listResult) {
-                cloudFileAdapter = new CloudFileAdapter(getApplicationContext(), listResult.getItems());
+                cloudFileAdapter = new CloudFileAdapter(CloudNotes.this, listResult.getItems());
                 cloudNotes.setLayoutManager(linearLayoutManager);
                 cloudNotes.setAdapter(cloudFileAdapter);
+            }
+        });
+    }
+
+    public void shareNote(StorageReference storageReference) {
+        File cache = getCacheDir();
+        File PDF = null;
+        try {
+            PDF = File.createTempFile("TempFile", null, cache);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        final File finalPDF = PDF;
+
+        storageReference.getFile(PDF).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("application/pdf");
+                shareIntent.putExtra(Intent.EXTRA_STREAM, finalPDF);
+                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivity(Intent.createChooser(shareIntent, "Share it"));
             }
         });
     }
