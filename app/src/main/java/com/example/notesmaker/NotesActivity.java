@@ -12,10 +12,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,19 +29,26 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.navigation.ui.AppBarConfiguration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextDetector;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.ml.quaterion.text2summary.Text2Summary;
 
 import java.io.File;
@@ -57,26 +66,84 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
     static final int REQUEST_IMAGE_CAPTURE = 2;
 
     private DrawerLayout drawer;
+    private AppBarConfiguration mAppBarConfiguration;
 
+    ImageView pfp; //Profile Photo
+    TextView username, userEmail;
+
+    NavigationView navigationView;
     RecyclerView PDFList;
     PdfListAdapter pdfListAdapter;
     LinearLayoutManager linearLayoutManager;
     File[] allPdfList;
+
+    FirebaseAuth mAuth;
+    FirebaseUser mUser;
+    FirebaseStorage storage;
+    StorageReference userStorage;
+    StorageReference pdfStorage;
+
+    @Override
+    protected void onStart() {
+
+        checkAuthentication();
+        super.onStart();
+    }
+
+    private void checkAuthentication() {
+        Menu menu = navigationView.getMenu();
+
+        MenuItem login = menu.findItem(R.id.nav_logout);
+
+        FirebaseUser mFirebaseUser = mAuth.getCurrentUser();
+        if(mFirebaseUser==null)
+        {
+            login.setTitle("Log In");
+            login.setIcon(getResources().getDrawable(R.drawable.login));
+        }
+        else
+        {
+            login.setTitle("Log Out");
+            login.setIcon(getResources().getDrawable(R.drawable.logout));
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notes);
 
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
+
+        if (mUser!=null){
+            storage = FirebaseStorage.getInstance();
+            userStorage = storage.getReference();
+            userStorage = userStorage.child(mUser.getUid());
+            pdfStorage = userStorage.child("PDFs");
+        }
+
+        PDFList = findViewById(R.id.pdfList);
         initRecyclerView();
+
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
+
+
+        View header = navigationView.getHeaderView(0);
+        pfp = header.findViewById(R.id.userProfilePhoto);
+        username = header.findViewById(R.id.username);
+        userEmail = header.findViewById(R.id.userEmail);
+
+
+
         navigationView.setNavigationItemSelectedListener(this);
 
+        if (mUser!=null){updateHeader();}
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -85,20 +152,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
 
 
-        pdfListAdapter.setOnItemClickListener(new PdfListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                Intent intent = new Intent(NotesActivity.this, PdfActivity.class);
-                // passing current pdf from here
-                String pdfpath = allPdfList[position].getPath();
 
-
-                Log.d("chk", pdfpath);
-
-                intent.putExtra("PdfPath", pdfpath);
-                startActivity(intent);
-            }
-        });
 
         FloatingActionButton camFab = findViewById(R.id.fab_cam);
         camFab.setOnClickListener(new View.OnClickListener() {
@@ -144,6 +198,18 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 //        });
     }
 
+    private void updateHeader() {
+        username.setText(mUser.getDisplayName());
+        userEmail.setText(mUser.getEmail());
+
+        if (mUser.getPhotoUrl()!=null){
+            pfp.setImageURI(mUser.getPhotoUrl());
+//            Glide.with(this)
+//                    .load(mUser.getPhotoUrl())
+//                    .into(pfp);
+        }
+    }
+
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -158,11 +224,26 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
             String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyPdf";
             File directory = new File(path);
             File[] allFiles = directory.listFiles();
-            PDFList = findViewById(R.id.pdfList);
+
 
             allPdfList = getPDFs(allFiles);
             pdfListAdapter = new PdfListAdapter(NotesActivity.this, allPdfList);
             linearLayoutManager = new LinearLayoutManager(this);
+
+            pdfListAdapter.setOnItemClickListener(new PdfListAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(int position) {
+                    Intent intent = new Intent(NotesActivity.this, PdfActivity.class);
+                    // passing current pdf from here
+                    String pdfpath = allPdfList[position].getPath();
+
+
+                    Log.d("chk", pdfpath);
+
+                    intent.putExtra("PdfPath", pdfpath);
+                    startActivity(intent);
+                }
+            });
 
             PDFList.setLayoutManager(linearLayoutManager);
             PDFList.setAdapter(pdfListAdapter);
@@ -171,8 +252,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         }
     }
 
-    public void deleteNote(final int position)
-    {
+    public void deleteNote(final int position) {
         if(allPdfList[position].exists())
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(NotesActivity.this);
@@ -357,8 +437,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         }
     }
 
-    private void saveToPDF(String text, String name)
-    {
+    private void saveToPDF(String text, String name) {
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
 
             if(text.isEmpty())
@@ -370,8 +449,20 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
                 PDF pdf = new PDF();
                 pdf.addParagraph(text);
-                pdf.makeDocument(path, name);
+                File file = pdf.makeDocument(path, name);
 
+                if (mUser!=null){
+                    if (file != null){
+                        StorageReference tempFile = pdfStorage.child(file.getName());
+                        tempFile.putFile(Uri.fromFile(file)).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                            }
+                        });
+                        Log.i("Cloud", "Uploaded");
+                    }
+                }
                 Toast.makeText(this, "Note Saved as a PDF in " + path, Toast.LENGTH_SHORT).show();
 
                 initRecyclerView();
@@ -395,8 +486,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         }
     }
 
-    private String summarizeText(String text)
-    {
+    private String summarizeText(String text) {
         final ObjectRef summary = new ObjectRef();
         summary.element = Text2Summary.Companion.summarize(text, 0.4F);
         //  TV.setText((CharSequence)((String)summary.element));
@@ -408,13 +498,26 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.nav_sync:
+                startActivity(new Intent(getApplicationContext(), CloudNotes.class));
                 Toast.makeText(this, "Sync", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_settings:
                 Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_logout:
-                Toast.makeText(this, "Log out", Toast.LENGTH_SHORT).show();
+                if(menuItem.getTitle()=="Log Out")
+                {
+                    mAuth.signOut();
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
+                    checkAuthentication();
+                    break;
+                }
+                else
+                {
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                }
                 break;
             case R.id.nav_read:
                 Toast.makeText(this, "Read", Toast.LENGTH_SHORT).show();
@@ -427,7 +530,59 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         return true;
     }
 
+    public void renameNote(final int adapterPosition) {
+
+
+
+        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(NotesActivity.this);
+        View mView = getLayoutInflater().inflate(R.layout.rename_dialog, null);
+
+        // declaring edit text\
+        final TextView renText = mView.findViewById(R.id.rename_text);
+        final EditText renEdit = mView.findViewById(R.id.rename_edit);
+        // setting view
+        builder.setView(mView);
+
+            // prevents off screen touches
+        builder.setCancelable(false);
+
+        builder.setPositiveButton("Rename", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                String finalText = renEdit.getText().toString() + ".pdf";
+                if(allPdfList[adapterPosition].exists())
+                {
+                    File from = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyPdf",allPdfList[adapterPosition].getName());
+                    File to = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyPdf",finalText);
+                    from.renameTo(to);
+                }
+                initRecyclerView();
+            }
+        });
+
+        // setting neg btn
+        builder.setNegativeButton("Cancel", null);
+
+        //show
+        builder.show();
+
+
+    }
+
+    public void shareNote(int adapterPosition) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("application/pdf");
+        Uri uri = FileProvider.getUriForFile(NotesActivity.this, NotesActivity.this.getPackageName() + ".provider", allPdfList[adapterPosition]);shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(Intent.createChooser(shareIntent, "Share it"));
+    }
+
 //   private void previewText(String string){
 //        textView.setText(string);
 //   }
+
+    public void uploadFile(){
+
+    }
 }
