@@ -2,16 +2,24 @@ package com.example.notesmaker;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.Button;
@@ -24,10 +32,12 @@ import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextDetector;
+import com.google.firebase.storage.StorageReference;
 import com.ml.quaterion.text2summary.Text2Summary;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.BufferUnderflowException;
@@ -103,8 +113,54 @@ public class PreviewActivity extends AppCompatActivity {
         });
     }
 
-    private void saveToPDF(String fullPDFString, String PDFName) {
-        //Code to save PDF
+    private void saveToPDF(String text, String name) {
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+
+            if(text.isEmpty())
+            {
+                Toast.makeText(this, "Nothing to save, Text is empty", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyPdf";
+
+                PDF pdf = new PDF();
+                pdf.addParagraph(text);
+                File file = pdf.makeDocument(path, name);
+
+//                if ( mUser!=null){
+//                    if (file != null){
+//                        StorageReference tempFile = pdfStorage.child(file.getName());
+//                        tempFile.putFile(Uri.fromFile(file)).addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//
+//                            }
+//                        });
+//                        Log.i("Cloud", "Uploaded");
+//                    }
+//                }
+                Toast.makeText(this, "Note Saved as a PDF in " + path, Toast.LENGTH_SHORT).show();
+
+            }
+
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+                AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                alert.setTitle("Storage Permission Needed");
+                alert.setMessage("We need storage permission to store the PDF on your device. Please grant storage permission.");
+                alert.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 01);
+                    }
+                });
+                alert.show();
+            } else {
+                requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 01);
+            }
+        }
+        startActivity(new Intent(PreviewActivity.this, NotesActivity.class));
+        finish();
     }
 
     String getName(String name){;
