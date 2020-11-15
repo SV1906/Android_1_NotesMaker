@@ -31,9 +31,11 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.navigation.ui.AppBarConfiguration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -125,6 +127,12 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
+
+
+        View header = navigationView.getHeaderView(0);
+        pfp = header.findViewById(R.id.userProfilePhoto);
+        username = header.findViewById(R.id.username);
+        userEmail = header.findViewById(R.id.userEmail);
 
 
 
@@ -423,12 +431,15 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
                 if (mUser!=null){
                     if (file != null){
                         StorageReference tempFile = pdfStorage.child(file.getName());
-                        tempFile.putFile(Uri.fromFile(file));
+                        tempFile.putFile(Uri.fromFile(file)).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                            }
+                        });
                         Log.i("Cloud", "Uploaded");
                     }
                 }
-
-
                 Toast.makeText(this, "Note Saved as a PDF in " + path, Toast.LENGTH_SHORT).show();
 
                 initRecyclerView();
