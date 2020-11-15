@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -30,8 +31,11 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.BufferUnderflowException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import kotlin.jvm.internal.Ref;
 
@@ -46,6 +50,7 @@ public class PreviewActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager mLayoutManager;
 
     private Button buttonAdd, buttonSaveToPDF;
+    private EditText editTextPDFName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +69,7 @@ public class PreviewActivity extends AppCompatActivity {
 
         buttonAdd = findViewById(R.id.btnAddPara);
         buttonSaveToPDF = findViewById(R.id.btnSavePDF);
+        editTextPDFName = findViewById(R.id.prevEditTextTitle);
 
         buttonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,13 +94,25 @@ public class PreviewActivity extends AppCompatActivity {
                 for (PreviewData data : mPreviewDataList){
                     fullPDFString += data.getPreviewText() + "\n";
                 }
-                saveToPDF(fullPDFString);
+                String PDFName = editTextPDFName.getText().toString();
+                if (PDFName == null){
+                    PDFName = getName(PDFName);
+                }
+                saveToPDF(fullPDFString, PDFName);
             }
         });
     }
 
-    private void saveToPDF(String fullPDFString) {
+    private void saveToPDF(String fullPDFString, String PDFName) {
         //Code to save PDF
+    }
+
+    String getName(String name){;
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss", Locale.ENGLISH);
+        Date now = new Date();
+
+        String pdfName = (name + "_" + formatter.format(now) + ".pdf");
+        return pdfName;
     }
 
     private void getTextFromBitmap(Bitmap bitmap) {
