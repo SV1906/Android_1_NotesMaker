@@ -58,7 +58,7 @@ class PDF {
                 dir.mkdirs();
 
 
-            file = new File(dir, getName(name));
+            file = new File(dir, name);
             FileOutputStream fOut = new FileOutputStream(file);
 
             PdfWriter.getInstance(document, fOut);
@@ -98,13 +98,5 @@ class PDF {
             document.close();
         }
         return file;
-    }
-
-    String getName(String name){
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss", Locale.ENGLISH);
-        Date now = new Date();
-
-        String pdfName = (name + "_" + formatter.format(now) + ".pdf");
-        return pdfName;
     }
 }

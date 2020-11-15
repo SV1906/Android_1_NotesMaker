@@ -94,7 +94,6 @@ public class CloudNotes extends AppCompatActivity {
     }
 
     public void shareNote(StorageReference storageReference) {
-        File cache = getCacheDir();
         File PDF = null;
         try {
             PDF = File.createTempFile(storageReference.getName(), ".pdf", getCacheDir());
@@ -102,15 +101,6 @@ public class CloudNotes extends AppCompatActivity {
             e.printStackTrace();
         }
         final File finalPDF = PDF;
-//        mFile.getFile(PDF).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-//            @Override
-//            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-//                Intent intent = new Intent(mContext, PdfActivity.class);
-//                intent.putExtra("PdfPath", finalPDF.getAbsolutePath());
-//                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                mContext.startActivity(intent);
-//            }
-//        });
 
         storageReference.getFile(PDF).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
             @Override
