@@ -83,6 +83,7 @@ public class Register extends AppCompatActivity {
 
                 fAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
+                    //as
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             FirebaseUser user = fAuth.getCurrentUser();

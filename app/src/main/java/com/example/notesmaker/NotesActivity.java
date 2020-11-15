@@ -485,6 +485,9 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
                 if(menuItem.getTitle()=="Log Out")
                 {
                     mAuth.signOut();
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
                     checkAuthentication();
                 }
                 else
