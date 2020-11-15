@@ -97,7 +97,6 @@ class PDF {
         } finally {
             document.close();
         }
-
         return file;
     }
 

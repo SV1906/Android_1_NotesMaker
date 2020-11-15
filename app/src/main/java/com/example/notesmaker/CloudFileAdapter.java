@@ -1,29 +1,27 @@
 package com.example.notesmaker;
 
-import android.app.AlarmManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.icu.util.Calendar;
-import android.provider.AlarmClock;
-import android.provider.CalendarContract;
+import android.net.Uri;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.vision.barcode.Barcode;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -64,6 +62,8 @@ class CloudFileAdapter extends RecyclerView.Adapter<CloudFileAdapter.ViewHolder>
             }
         });
 
+
+
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,7 +78,6 @@ class CloudFileAdapter extends RecyclerView.Adapter<CloudFileAdapter.ViewHolder>
                 mFile.getFile(PDF).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-
                         Intent intent = new Intent(mContext, PdfActivity.class);
                         intent.putExtra("PdfPath", finalPDF.getAbsolutePath());
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -110,6 +109,7 @@ class CloudFileAdapter extends RecyclerView.Adapter<CloudFileAdapter.ViewHolder>
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView cloudFileName, cloudFileSize, cloudFileTime;
+        ImageButton cloudFileMenu;
         View mView;
 
         public ViewHolder(@NonNull View mItem) {
@@ -117,6 +117,8 @@ class CloudFileAdapter extends RecyclerView.Adapter<CloudFileAdapter.ViewHolder>
             cloudFileName =mItem.findViewById(R.id.cloudFileName);
             cloudFileSize = mItem.findViewById(R.id.cloudFileSize);
             cloudFileTime = mItem.findViewById(R.id.cloudFileTime);
+            cloudFileMenu = mItem.findViewById(R.id.cloudFileMenu);
+
             mView = mItem;
         }
     }
