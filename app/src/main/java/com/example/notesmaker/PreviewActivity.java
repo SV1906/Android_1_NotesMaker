@@ -149,16 +149,19 @@ public class PreviewActivity extends AppCompatActivity {
     public void insertItem(int position, String text){
         mPreviewDataList.add(position, new PreviewData(text));
         mAdapter.notifyItemInserted(position);
+        mAdapter.notifyDataSetChanged();
     }
 
     public void removeItem(int position){
         mPreviewDataList.remove(position);
         mAdapter.notifyItemRemoved(position);
+        mAdapter.notifyDataSetChanged();
     }
 
     public void changeItem(int position, String text){
         mPreviewDataList.get(position).changeText(text);
         mAdapter.notifyItemChanged(position);
+        mAdapter.notifyDataSetChanged();
     }
 
     public void createPreviewDataList(){
