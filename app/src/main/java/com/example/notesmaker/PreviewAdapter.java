@@ -125,13 +125,13 @@ public class PreviewAdapter extends RecyclerView.Adapter<PreviewAdapter.PreviewV
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                if (s != null) {
+                    mPreviewDataList.get(position).changeText(String.valueOf(s));
+                }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-//                if (s != null) {
-//                    mPreviewDataList.get(position).changeText(String.valueOf(s));
 
             }
         });

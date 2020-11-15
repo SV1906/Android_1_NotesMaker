@@ -77,11 +77,11 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
     LinearLayoutManager linearLayoutManager;
     File[] allPdfList;
 
-    FirebaseAuth mAuth;
+    public static FirebaseAuth mAuth;
     FirebaseUser mUser;
     FirebaseStorage storage;
     StorageReference userStorage;
-    StorageReference pdfStorage;
+    public static StorageReference pdfStorage;
 
     @Override
     protected void onStart() {
