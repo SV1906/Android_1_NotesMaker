@@ -489,6 +489,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
                     finish();
                     startActivity(intent);
                     checkAuthentication();
+                    break;
                 }
                 else
                 {
