@@ -570,7 +570,8 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
     public void shareNote(int adapterPosition) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("application/pdf");
-        Uri uri = FileProvider.getUriForFile(NotesActivity.this, NotesActivity.this.getPackageName() + ".provider", allPdfList[adapterPosition]);shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        Uri uri = FileProvider.getUriForFile(NotesActivity.this, NotesActivity.this.getPackageName() + ".provider", allPdfList[adapterPosition]);
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivity(Intent.createChooser(shareIntent, "Share it"));
