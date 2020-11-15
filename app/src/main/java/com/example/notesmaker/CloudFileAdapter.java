@@ -68,7 +68,6 @@ class CloudFileAdapter extends RecyclerView.Adapter<CloudFileAdapter.ViewHolder>
         });
 
 
-
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,6 +90,33 @@ class CloudFileAdapter extends RecyclerView.Adapter<CloudFileAdapter.ViewHolder>
                 });
             }
         });
+
+        holder.cloudFileMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    PopupMenu popupMenu = new PopupMenu(v.getContext(), v);
+                    popupMenu.inflate(R.menu.cloud_file_menu);
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch(item.getItemId())
+                            {
+                                case R.id.men_share:
+                                    ((CloudNotes)mContext).shareNote(mFile);
+                                    break;
+
+                                case R.id.men_delete:
+                                    deleteFile(mFile);
+                                    break;
+                            }
+                            return false;
+                        }
+                    });
+                    popupMenu.show();
+            }
+        });
+
+
     }
 
     private String getSize(long sizeBytes) {
@@ -126,6 +152,28 @@ class CloudFileAdapter extends RecyclerView.Adapter<CloudFileAdapter.ViewHolder>
 
             mView = mItem;
         }
+    }
+
+    private boolean deleteFile(final StorageReference storageReference){
+        AlertDialog dialog = new AlertDialog.Builder(mContext)
+                .setTitle("Delete File on Cloud")
+                .setMessage("Once you delete this file it will disappear forever.\n Are you sure you want to delete?")
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        storageReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(mContext, "File Deleted Successfully", Toast.LENGTH_SHORT).show();
+                                ((CloudNotes)mContext).getFiles();
+                            }
+                        });
+                    }
+                })
+                .setNeutralButton("Cancel", null)
+                .create();
+        dialog.show();
+        return false;
     }
 
 }
