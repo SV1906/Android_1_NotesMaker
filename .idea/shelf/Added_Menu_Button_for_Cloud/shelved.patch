@@ -1,0 +1,67 @@
+Index: app/src/main/java/com/example/notesmaker/CloudFileAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.notesmaker;\r\n\r\nimport android.content.Context;\r\nimport android.content.Intent;\r\nimport android.net.Uri;\r\nimport android.view.LayoutInflater;\r\nimport android.view.MenuItem;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.ImageButton;\r\nimport android.widget.PopupMenu;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.core.content.FileProvider;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport com.google.android.gms.tasks.OnSuccessListener;\r\nimport com.google.firebase.storage.FileDownloadTask;\r\nimport com.google.firebase.storage.StorageMetadata;\r\nimport com.google.firebase.storage.StorageReference;\r\n\r\nimport java.io.File;\r\nimport java.io.IOException;\r\nimport java.text.DateFormat;\r\nimport java.text.SimpleDateFormat;\r\nimport java.util.Date;\r\nimport java.util.List;\r\nimport java.util.TimeZone;\r\n\r\nclass CloudFileAdapter extends RecyclerView.Adapter<CloudFileAdapter.ViewHolder> {\r\n    private Context mContext;\r\n    private List<StorageReference> mList;\r\n\r\n\r\n    public CloudFileAdapter(Context mContext, List<StorageReference> mList) {\r\n        this.mContext = mContext;\r\n        this.mList = mList;\r\n    }\r\n\r\n    @NonNull\r\n    @Override\r\n    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {\r\n        View view = LayoutInflater.from(mContext).inflate(R.layout.single_cloud_item, parent, false);\r\n\r\n        return new ViewHolder(view);\r\n    }\r\n\r\n    @Override\r\n    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {\r\n        final StorageReference mFile = mList.get(position);\r\n        holder.cloudFileName.setText(mFile.getName());\r\n\r\n        mFile.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {\r\n            @Override\r\n            public void onSuccess(StorageMetadata storageMetadata) {\r\n            Date date = new Date(storageMetadata.getCreationTimeMillis());\r\n            DateFormat formatter = new SimpleDateFormat(\"dd/MM/yy  HH:mm:ss\");\r\n            formatter.setTimeZone(TimeZone.getDefault());\r\n            holder.cloudFileSize.setText(formatter.format(date));\r\n            holder.cloudFileTime.setText(getSize(storageMetadata.getSizeBytes()));\r\n            }\r\n        });\r\n\r\n\r\n\r\n        holder.mView.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                File cache = mContext.getCacheDir();\r\n                File PDF = null;\r\n                try {\r\n                    PDF = File.createTempFile(\"TempFile\", null, cache);\r\n                } catch (IOException e) {\r\n                    e.printStackTrace();\r\n                }\r\n                final File finalPDF = PDF;\r\n                mFile.getFile(PDF).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {\r\n                    @Override\r\n                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {\r\n                        Intent intent = new Intent(mContext, PdfActivity.class);\r\n                        intent.putExtra(\"PdfPath\", finalPDF.getAbsolutePath());\r\n                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);\r\n                        mContext.startActivity(intent);\r\n                    }\r\n                });\r\n            }\r\n        });\r\n    }\r\n\r\n    private String getSize(long sizeBytes) {\r\n        long MB = 1024L * 1024L;\r\n        long KB = 1024L;\r\n\r\n        String size = (sizeBytes) + \"Bytes\";\r\n        if (sizeBytes>(2*MB)){\r\n            size = (sizeBytes/MB) + \"MB\";\r\n        }else if (sizeBytes>(2*KB)){\r\n            size = (sizeBytes/KB) + \"KB\";\r\n        }\r\n        return size;\r\n    }\r\n\r\n    @Override\r\n    public int getItemCount() {\r\n        return mList.size();\r\n    }\r\n\r\n\r\n    public class ViewHolder extends RecyclerView.ViewHolder {\r\n        public TextView cloudFileName, cloudFileSize, cloudFileTime;\r\n        ImageButton cloudFileMenu;\r\n        View mView;\r\n\r\n        public ViewHolder(@NonNull View mItem) {\r\n            super(mItem);\r\n            cloudFileName =mItem.findViewById(R.id.cloudFileName);\r\n            cloudFileSize = mItem.findViewById(R.id.cloudFileSize);\r\n            cloudFileTime = mItem.findViewById(R.id.cloudFileTime);\r\n            cloudFileMenu = mItem.findViewById(R.id.cloudFileMenu);\r\n\r\n            mView = mItem;\r\n        }\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/notesmaker/CloudFileAdapter.java	(revision d3e866332aba41c0139c4f9b59b79608e5532b62)
++++ app/src/main/java/com/example/notesmaker/CloudFileAdapter.java	(date 1605432822398)
+@@ -63,7 +63,6 @@
+         });
+ 
+ 
+-
+         holder.mView.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+@@ -86,6 +85,35 @@
+                 });
+             }
+         });
++
++        holder.cloudFileMenu.setOnClickListener(new View.OnClickListener() {
++            @Override
++            public void onClick(View v) {
++                    PopupMenu popupMenu = new PopupMenu(v.getContext(), v);
++                    popupMenu.inflate(R.menu.pop_up_menu);
++                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
++                        @Override
++                        public boolean onMenuItemClick(MenuItem item) {
++                            switch(item.getItemId())
++                            {
++                                case R.id.men_rename:
++
++                                    break;
++                                case R.id.men_share:
++
++                                    break;
++                                case R.id.men_delete:
++
++                                    break;
++                            }
++                            return false;
++                        }
++                    });
++                    popupMenu.show();
++            }
++        });
++
++
+     }
+ 
+     private String getSize(long sizeBytes) {
+@@ -123,4 +151,8 @@
+         }
+     }
+ 
++    private void rename(StorageReference storageReference){
++        
++    }
++
+ }
+diff --git .idea/shelf/Added_Image_Crop_and_Retrieve.xml .idea/shelf/Added_Image_Crop_and_Retrieve.xml
+diff --git .idea/shelf/Uncommitted_changes_before_Update_at_13-11-2020_04_58_PM__Default_Changelist_.xml .idea/shelf/Uncommitted_changes_before_Update_at_13-11-2020_04_58_PM__Default_Changelist_.xml
+diff --git .idea/shelf/Uncommitted_changes_before_rebase__Added_Image_Crop_and_Retrieve_.xml .idea/shelf/Uncommitted_changes_before_rebase__Added_Image_Crop_and_Retrieve_.xml
+diff --git .idea/shelf/Uncommitted_changes_before_Update_at_13-11-2020_12_58_PM__Default_Changelist_.xml .idea/shelf/Uncommitted_changes_before_Update_at_13-11-2020_12_58_PM__Default_Changelist_.xml
+diff --git .idea/shelf/Uncommitted_changes_before_Update_at_13-11-2020_12_38_PM__Default_Changelist_.xml .idea/shelf/Uncommitted_changes_before_Update_at_13-11-2020_12_38_PM__Default_Changelist_.xml
