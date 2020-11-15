@@ -19,7 +19,7 @@
         app:layout_constraintVertical_bias="0.127" />
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/profile_image"
+        android:id="@+id/profile_photo"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_below="@id/register_text"
@@ -40,7 +40,7 @@
         android:layout_margin="5dp"
         android:hint="Enter Name"
         android:inputType="textPersonName"
-        android:layout_below="@id/profile_image" />
+        android:layout_below="@id/profile_photo" />
 
 
     <EditText

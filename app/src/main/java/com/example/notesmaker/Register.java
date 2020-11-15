@@ -5,11 +5,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -23,10 +21,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.theartofdev.edmodo.cropper.CropImage;
-import com.yalantis.ucrop.UCrop;
-
-import java.io.File;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -51,7 +47,7 @@ public class Register extends AppCompatActivity {
         rEmailId = findViewById(R.id.edit_text_emailId);
         rPassword = findViewById(R.id.edit_text_password);
         rName = findViewById(R.id.edit_text_name);
-        profilePicture = findViewById(R.id.profile_image);
+        profilePicture = findViewById(R.id.profile_photo);
 
         profilePicture.setOnClickListener(new SelectImage());
         pfp = null;
@@ -86,14 +82,17 @@ public class Register extends AppCompatActivity {
                     //as
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            FirebaseUser user = fAuth.getCurrentUser();
+                            final FirebaseUser user = fAuth.getCurrentUser();
                             user.sendEmailVerification()
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
                                             Toast.makeText(Register.this, "Verification Message has been sent", Toast.LENGTH_LONG).show();
-
-
+                                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                                    .setDisplayName(rName.getText().toString())
+                                                    .setPhotoUri(pfp)
+                                                    .build();
+                                            user.updateProfile(profileUpdates);
                                         }
                                     }
                             ).addOnFailureListener(new OnFailureListener() {

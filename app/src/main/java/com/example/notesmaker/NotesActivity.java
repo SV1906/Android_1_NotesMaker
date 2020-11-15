@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,6 +66,10 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
     static final int REQUEST_IMAGE_CAPTURE = 2;
 
     private DrawerLayout drawer;
+    private AppBarConfiguration mAppBarConfiguration;
+
+    ImageView pfp; //Profile Photo
+    TextView username, userEmail;
 
     NavigationView navigationView;
     RecyclerView PDFList;
@@ -138,6 +143,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
         navigationView.setNavigationItemSelectedListener(this);
 
+        if (mUser!=null){updateHeader();}
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -190,6 +196,18 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 //                startActivityForResult(myFileIntent, REQUEST_CODE_SELECT_DOC);
 //            }
 //        });
+    }
+
+    private void updateHeader() {
+        username.setText(mUser.getDisplayName());
+        userEmail.setText(mUser.getEmail());
+
+        if (mUser.getPhotoUrl()!=null){
+            pfp.setImageURI(mUser.getPhotoUrl());
+//            Glide.with(this)
+//                    .load(mUser.getPhotoUrl())
+//                    .into(pfp);
+        }
     }
 
     @Override
