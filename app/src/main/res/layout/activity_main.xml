@@ -59,8 +59,9 @@
 
     <Button
         android:id="@+id/button3"
-        android:layout_width="104dp"
-        android:layout_height="wrap_content"
-        android:text="Resend Verification" />
+        android:layout_width="133dp"
+        android:layout_height="71dp"
+        android:text="Resend Verification"
+        android:visibility="invisible" />
 </LinearLayout>
 
