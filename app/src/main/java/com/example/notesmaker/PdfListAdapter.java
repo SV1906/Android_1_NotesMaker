@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -15,13 +17,52 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
-class PdfListAdapter extends RecyclerView.Adapter<PdfListAdapter.PdfViewHolder> {
+import static androidx.core.content.ContextCompat.startActivity;
 
+class PdfListAdapter extends RecyclerView.Adapter<PdfListAdapter.PdfViewHolder> implements Filterable {
 
+    List<File> moviesList;
+    List<File> moviesListAll;
     private OnItemClickListener mListener;
     private Context context;
+
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+
+    Filter filter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<File> filteredList = new ArrayList<>();
+            if(constraint.toString().isEmpty()){
+             filteredList.addAll(moviesListAll);
+            }
+            else{
+                for(File movie: moviesListAll){
+                    if(movie.getName().toLowerCase().contains((constraint.toString().toLowerCase()))){
+                        filteredList.add(movie);
+                    }
+                }
+            }
+            FilterResults filterResults = new FilterResults();
+            filterResults.values =filteredList;
+            return filterResults;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+           moviesList = (List<File>) results.values;
+           notifyDataSetChanged();
+        }
+    };
+
 
     public interface OnItemClickListener{
         void onItemClick(int position);
@@ -37,7 +78,12 @@ class PdfListAdapter extends RecyclerView.Adapter<PdfListAdapter.PdfViewHolder> 
         Arrays.sort(PDFs);
         this.PDFs = PDFs;
         this.context = context;
+
+        this.moviesList = Arrays.asList(PDFs);
+        this.moviesListAll = new ArrayList<>(moviesList);
+
     }
+
 
     @NonNull
     @Override
@@ -48,13 +94,13 @@ class PdfListAdapter extends RecyclerView.Adapter<PdfListAdapter.PdfViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull PdfViewHolder holder, int position) {
-        holder.pdfName.setText(PDFs[position].getName());
+        holder.pdfName.setText(moviesList.get(position).getName());
 
     }
 
     @Override
     public int getItemCount() {
-        return PDFs.length;
+        return moviesList.size();
     }
 
     public class PdfViewHolder extends RecyclerView.ViewHolder implements PopupMenu.OnMenuItemClickListener {
@@ -70,8 +116,6 @@ class PdfListAdapter extends RecyclerView.Adapter<PdfListAdapter.PdfViewHolder> 
             dotBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Log.d("chk","clicked");
-//                    ((NotesActivity)context).deleteNote(getAdapterPosition());
                         showPopupMenu(v);
 
                 }
