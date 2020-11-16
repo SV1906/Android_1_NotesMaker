@@ -31,12 +31,12 @@ class PdfListAdapter extends RecyclerView.Adapter<PdfListAdapter.PdfViewHolder> 
     List<File> moviesListAll;
     private OnItemClickListener mListener;
     private Context context;
-    //TextView pdfName;
 
     @Override
     public Filter getFilter() {
         return filter;
     }
+
     Filter filter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
@@ -46,7 +46,7 @@ class PdfListAdapter extends RecyclerView.Adapter<PdfListAdapter.PdfViewHolder> 
             }
             else{
                 for(File movie: moviesListAll){
-                    if(movie.getName() == (constraint.toString().toLowerCase())){
+                    if(movie.getName().toLowerCase().contains((constraint.toString().toLowerCase()))){
                         filteredList.add(movie);
                     }
                 }
@@ -58,16 +58,8 @@ class PdfListAdapter extends RecyclerView.Adapter<PdfListAdapter.PdfViewHolder> 
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-           //moviesList.clear();
-          // moviesList.listFiles((Collection<? extends File>) results.values);
-           // onCreateViewHolder(@NonNull ViewGroup parent, int viewType);
-           // ViewGroup parent;
-         //   int view = LayoutInflater.from(parent.getContext()).inflate(R.layout.pdf_list_item, parent, false);
-           // public PdfViewHolder(@NonNull View view)
-           // Object parent;
-            //onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
-           // setOnItemClickListener();
-           // buttonOA = findViewById(R.id.button_oldAcc)
+           moviesList = (List<File>) results.values;
+           notifyDataSetChanged();
         }
     };
 
@@ -86,21 +78,12 @@ class PdfListAdapter extends RecyclerView.Adapter<PdfListAdapter.PdfViewHolder> 
         Arrays.sort(PDFs);
         this.PDFs = PDFs;
         this.context = context;
-//        List<String> moviesList = new ArrayList<>();
- //      for (String t : PDFs) {
-   //     moviesList.add(t);
-     //   }
-
-     //   List<File> moviesList = Arrays.asList(PDFs);
-      //  String pdfNames1 = pdfName.getText().toString().trim();
-        //List<String> list = Arrays.asList(pdfNames1);
-      //  List<String> list = new ArrayList<>();
-       // Collections.addAll(list, PDFs);
 
         this.moviesList = Arrays.asList(PDFs);
         this.moviesListAll = new ArrayList<>(moviesList);
 
     }
+
 
     @NonNull
     @Override
@@ -111,13 +94,13 @@ class PdfListAdapter extends RecyclerView.Adapter<PdfListAdapter.PdfViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull PdfViewHolder holder, int position) {
-        holder.pdfName.setText(PDFs[position].getName());
+        holder.pdfName.setText(moviesList.get(position).getName());
 
     }
 
     @Override
     public int getItemCount() {
-        return PDFs.length;
+        return moviesList.size();
     }
 
     public class PdfViewHolder extends RecyclerView.ViewHolder implements PopupMenu.OnMenuItemClickListener {
@@ -133,8 +116,6 @@ class PdfListAdapter extends RecyclerView.Adapter<PdfListAdapter.PdfViewHolder> 
             dotBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Log.d("chk","clicked");
-//                    ((NotesActivity)context).deleteNote(getAdapterPosition());
                         showPopupMenu(v);
 
                 }
