@@ -1,80 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NotesActivity">
+    android:fitsSystemWindows="true"
+    tools:context=".MainActivity"
+    tools:openDrawer="start">
 
-<!--    text view for checking the ocr model-->
-
-    <TextView
-        android:id="@+id/preview_text"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="66dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:textColor="#000000"
-        android:textSize="20dp" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <com.getbase.floatingactionbutton.FloatingActionsMenu
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+        <RelativeLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/pdfList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <com.getbase.floatingactionbutton.FloatingActionsMenu
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="10dp"
+                app:fab_addButtonColorNormal="@color/pink"
+                app:fab_addButtonColorPressed="@color/pink_pressed"
+                app:fab_addButtonPlusIconColor="@color/white"
+                app:fab_labelStyle="@style/custom_fab"
+                android:layout_alignParentRight="true">
+
+                <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:fab_colorNormal="@color/white"
+                    app:fab_colorPressed="@color/white_pressed"
+                    app:fab_size="mini"
+                    app:fab_icon="@drawable/ic_baseline_add_photo_alternate_24"
+                    android:id="@+id/fab_image"
+                    app:fab_title="Add a note from Image"/>
+
+                <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:fab_colorNormal="@color/white"
+                    app:fab_colorPressed="@color/white_pressed"
+                    app:fab_size="mini"
+                    app:fab_icon="@drawable/ic_baseline_add_a_photo_24"
+                    android:id="@+id/fab_cam"
+                    app:fab_title="Add a note from camera"/>
+
+            </com.getbase.floatingactionbutton.FloatingActionsMenu>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="10dp"
-        app:fab_addButtonColorNormal="@color/pink"
-        app:fab_addButtonColorPressed="@color/pink_pressed"
-        app:fab_addButtonPlusIconColor="@color/white"
-        app:fab_labelStyle="@style/custom_fab"
-        android:layout_alignParentRight="true">
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/drawer_menu" />
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:fab_colorNormal="@color/white"
-            app:fab_colorPressed="@color/white_pressed"
-            app:fab_size="mini"
-            app:fab_icon="@drawable/ic_baseline_add_photo_alternate_24"
-            android:id="@+id/fab_image"
-            app:fab_title="Add a note from Image"/>
+</androidx.drawerlayout.widget.DrawerLayout>
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:fab_colorNormal="@color/white"
-            app:fab_colorPressed="@color/white_pressed"
-            app:fab_size="mini"
-            app:fab_icon="@drawable/ic_baseline_add_a_photo_24"
-            android:id="@+id/fab_cam"
-            app:fab_title="Add a note from camera"/>
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:fab_colorNormal="@color/white"
-            app:fab_colorPressed="@color/white_pressed"
-            app:fab_size="mini"
-            app:fab_icon="@drawable/ic_baseline_insert_drive_file_24"
-            android:id="@+id/fab_doc"
-            app:fab_title="Add a note from document"/>
 
-    </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
-    <Button
-        android:id="@+id/button4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="15dp"
-        android:text="Summary" />
-
-</RelativeLayout>
