@@ -115,8 +115,6 @@ class CloudFileAdapter extends RecyclerView.Adapter<CloudFileAdapter.ViewHolder>
                     popupMenu.show();
             }
         });
-
-
     }
 
     private String getSize(long sizeBytes) {

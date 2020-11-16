@@ -39,8 +39,6 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
-
-
             final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
             final Preference path = findPreference("Path");
             preferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {

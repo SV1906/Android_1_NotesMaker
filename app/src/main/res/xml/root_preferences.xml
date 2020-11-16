@@ -10,15 +10,15 @@
     <PreferenceCategory app:title="Sync">
 
         <SwitchPreferenceCompat
-            app:key="sync"
-            app:title="@string/sync_title" />
+            app:key="CloudUpload"
+            app:title="Upload to Cloud" />
 
-        <SwitchPreferenceCompat
-            app:dependency="sync"
-            app:key="attachment"
-            app:summaryOff="@string/attachment_summary_off"
-            app:summaryOn="@string/attachment_summary_on"
-            app:title="@string/attachment_title" />
+        <ListPreference
+            app:entries="@array/reply_entries"
+            app:entryValues="@array/reply_values"
+            app:key="Storage"
+            app:title= "Storage"
+            app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
 
