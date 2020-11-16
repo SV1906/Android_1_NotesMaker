@@ -58,9 +58,10 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/button_resend"
         android:layout_width="104dp"
         android:layout_height="wrap_content"
+        android:visibility="invisible"
         android:text="Resend Verification" />
 </LinearLayout>
 
