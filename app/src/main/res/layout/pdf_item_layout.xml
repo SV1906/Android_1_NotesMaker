@@ -24,7 +24,7 @@
                 android:layout_marginTop="10dp"
                 android:text="listItem Title"
                 android:textColor="@color/defaultTextColor"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:textStyle="bold"/>
 
             <TextView
