@@ -77,8 +77,6 @@ public class PreviewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_preview);
 
         mAuth = FirebaseAuth.getInstance();
-
-        FirebaseUser mFirebaseUser = mAuth.getCurrentUser();
         mUser = mAuth.getCurrentUser();
 
         if (mUser!=null){
@@ -101,6 +99,7 @@ public class PreviewActivity extends AppCompatActivity {
         buttonAdd = findViewById(R.id.btnAddPara);
         buttonSaveToPDF = findViewById(R.id.btnSavePDF);
         editTextPDFName = findViewById(R.id.prevEditTextTitle);
+        editTextPDFName.setText(getName("Document"));
 
         buttonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,7 +126,7 @@ public class PreviewActivity extends AppCompatActivity {
                 }
                 String PDFName = editTextPDFName.getText().toString();
                 if (PDFName == null){
-                    PDFName = getName(PDFName);
+                    PDFName = getName("Document");
                 }
                 saveToPDF(fullPDFString, PDFName);
             }

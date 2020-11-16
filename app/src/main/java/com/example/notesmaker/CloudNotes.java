@@ -30,6 +30,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 
 public class CloudNotes extends AppCompatActivity {
 
@@ -93,10 +94,9 @@ public class CloudNotes extends AppCompatActivity {
     }
 
     public void shareNote(StorageReference storageReference) {
-        File cache = getCacheDir();
         File PDF = null;
         try {
-            PDF = File.createTempFile("TempFile", null, cache);
+            PDF = File.createTempFile(storageReference.getName(), ".pdf", getCacheDir());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -106,8 +106,10 @@ public class CloudNotes extends AppCompatActivity {
             @Override
             public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                Uri uri = FileProvider.getUriForFile(CloudNotes.this, CloudNotes.this.getPackageName() + ".provider", finalPDF);
+                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 shareIntent.setType("application/pdf");
-                shareIntent.putExtra(Intent.EXTRA_STREAM, finalPDF);
+                shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
                 shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 startActivity(Intent.createChooser(shareIntent, "Share it"));
             }
