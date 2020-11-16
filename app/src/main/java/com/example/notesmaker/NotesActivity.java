@@ -524,7 +524,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
                 Toast.makeText(this, "Sync", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_settings:
-                Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
                 break;
             case R.id.nav_logout:
                 if(menuItem.getTitle()=="Log Out")
