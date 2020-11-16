@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
@@ -17,11 +18,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import static androidx.core.content.ContextCompat.startActivity;
 
@@ -88,14 +93,31 @@ class PdfListAdapter extends RecyclerView.Adapter<PdfListAdapter.PdfViewHolder> 
     @NonNull
     @Override
     public PdfViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.pdf_list_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.pdf_item_layout, parent, false);
         return new PdfViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull PdfViewHolder holder, int position) {
+        Date date = new Date(moviesList.get(position).lastModified());
+        DateFormat formatter = new SimpleDateFormat("dd/MM/yy  HH:mm:ss");
+        formatter.setTimeZone(TimeZone.getDefault());
+        holder.pdfDate.setText(formatter.format(date));
+        holder.pdfSize.setText(getSize(moviesList.get(position).length()));
         holder.pdfName.setText(moviesList.get(position).getName());
 
+    }
+    private String getSize(long sizeBytes) {
+        long MB = 1024L * 1024L;
+        long KB = 1024L;
+
+        String size = (sizeBytes) + "Bytes";
+        if (sizeBytes>(2*MB)){
+            size = (sizeBytes/MB) + "MB";
+        }else if (sizeBytes>(2*KB)){
+            size = (sizeBytes/KB) + "KB";
+        }
+        return size;
     }
 
     @Override
@@ -104,14 +126,16 @@ class PdfListAdapter extends RecyclerView.Adapter<PdfListAdapter.PdfViewHolder> 
     }
 
     public class PdfViewHolder extends RecyclerView.ViewHolder implements PopupMenu.OnMenuItemClickListener {
-        TextView pdfName;
-        ImageButton dotBtn;
+        TextView pdfName, pdfSize, pdfDate;
+        Button dotBtn;
 
         public PdfViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            pdfName = itemView.findViewById(R.id.pdfName);
-            dotBtn = itemView.findViewById(R.id.drop_down);
+            pdfName = itemView.findViewById(R.id.cloudFileName);
+            pdfDate = itemView.findViewById(R.id.cloudFileSize);
+            pdfSize = itemView.findViewById(R.id.cloudFileTime);
+            dotBtn = itemView.findViewById(R.id.cloudFileMenu);
 
             dotBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
