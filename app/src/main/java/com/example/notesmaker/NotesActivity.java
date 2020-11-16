@@ -432,7 +432,6 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
             Intent previewActivity = new Intent(NotesActivity.this, PreviewActivity.class);
             previewActivity.putExtra("Text", text);
             startActivity(previewActivity);
-            finish();
 
         }
     }
