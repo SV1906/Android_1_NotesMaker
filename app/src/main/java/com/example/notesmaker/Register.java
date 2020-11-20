@@ -100,8 +100,10 @@ public class Register extends AppCompatActivity {
                                 public void onFailure(@NonNull Exception e) {
                                     Log.d(TAG, "On Failure: Message not sent" + e.getMessage());
                                     Toast.makeText(Register.this, "Verification Message not sent", Toast.LENGTH_LONG).show();
+                                    user.delete();
                                 }
                             });
+                            fAuth.signOut();
                             Toast.makeText(Register.this, "User Created", Toast.LENGTH_LONG).show();
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         } else {

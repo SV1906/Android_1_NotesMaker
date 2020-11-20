@@ -13,6 +13,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -47,23 +48,26 @@ class PDF {
     }
 
     //Code to make the document
-    public File makeDocument(String path, String name){
+    public File makeDocument(File file){
 
         document = new Document();
-        File dir, file;
-        file = null;
+        File dir;
+
+
+        FileOutputStream fOut = null;
         try {
-            dir = new File(path);
-            if(!dir.exists())
-                dir.mkdirs();
+            fOut = new FileOutputStream(file);
+        } catch (FileNotFoundException fileNotFoundException) {
+            fileNotFoundException.printStackTrace();
+        }
 
-
-            file = new File(dir, name);
-            FileOutputStream fOut = new FileOutputStream(file);
-
+        try {
             PdfWriter.getInstance(document, fOut);
+        } catch (DocumentException documentException) {
+            documentException.printStackTrace();
+        }
 
-            //open the document
+        //open the document
             document.open();
             document.newPage();
             page = 1;
@@ -78,7 +82,11 @@ class PDF {
                     switch (data[j][0]){
                         case "Para":{
                             Paragraph paragraph = new Paragraph(data[j][1], paraFont);
-                            document.add(paragraph);
+                            try {
+                                document.add(paragraph);
+                            } catch (DocumentException e) {
+                                e.printStackTrace();
+                            }
                             break;
                         }
 
@@ -89,14 +97,7 @@ class PDF {
                     }
                 }
             }
-
-        } catch (DocumentException de) {
-            Log.e("PDFCreator", "DocumentException:" + de);
-        } catch (IOException e) {
-            Log.e("PDFCreator", "ioException:" + e);
-        } finally {
-            document.close();
-        }
+        document.close();
         return file;
-    }
+        }
 }

@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,6 +13,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -41,8 +43,12 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.BufferUnderflowException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -62,6 +68,8 @@ public class PreviewActivity extends AppCompatActivity {
     private PreviewAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
+    SharedPreferences preferences;
+
     private Button buttonAdd, buttonSaveToPDF;
     private EditText editTextPDFName;
 
@@ -78,6 +86,8 @@ public class PreviewActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
+
+        preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         if (mUser!=null){
             storage = FirebaseStorage.getInstance();
@@ -145,18 +155,50 @@ public class PreviewActivity extends AppCompatActivity {
 
                 PDF pdf = new PDF();
                 pdf.addParagraph(text);
-                File file = pdf.makeDocument(path, name);
+                File temp = null;
+                try {
+                    temp = File.createTempFile(name, ".pdf", getCacheDir());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                final File file = pdf.makeDocument(temp);
 
-                if ( mUser!=null){
-                    if (file != null){
-                        StorageReference tempFile = pdfStorage.child(file.getName());
-                        tempFile.putFile(Uri.fromFile(file)).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
+                if (mUser!=null){
+                    if (preferences.getBoolean("CloudUpload", false)){
+                        if (file != null){
+                            StorageReference tempFile = pdfStorage.child(name + ".pdf");
+                            tempFile.putFile(Uri.fromFile(file)).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
 
+                                }
+                            });
+                        } if (!preferences.getBoolean("LocalStorage", false)){
+                            File dir;
+
+                            dir = new File(path);
+                            if(!dir.exists())
+                                dir.mkdirs();
+                            File finalPDF = new File(path, name + ".pdf");
+                            try {
+                                copy(file, finalPDF);
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-                        });
-                        Log.i("Cloud", "Uploaded");
+                        }
+
+                    } else {
+                        File dir;
+
+                        dir = new File(path);
+                        if(!dir.exists())
+                            dir.mkdirs();
+                        File finalPDF = new File(path, name + ".pdf");
+                        try {
+                            copy(file, finalPDF);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
                 Toast.makeText(this, "Note Saved as a PDF in " + path, Toast.LENGTH_SHORT).show();
@@ -187,7 +229,7 @@ public class PreviewActivity extends AppCompatActivity {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss", Locale.ENGLISH);
         Date now = new Date();
 
-        String pdfName = (name + "_" + formatter.format(now) + ".pdf");
+        String pdfName = (name + "_" + formatter.format(now));
         return pdfName;
     }
 
@@ -316,5 +358,18 @@ public class PreviewActivity extends AppCompatActivity {
 
     private void startCrop(Uri imageUri) {
         CropImage.activity(imageUri).setGuidelines(CropImageView.Guidelines.ON).setMultiTouchEnabled(true).start(this);
+    }
+
+    public static void copy(File src, File dst) throws IOException {
+        try (InputStream in = new FileInputStream(src)) {
+            try (OutputStream out = new FileOutputStream(dst)) {
+                // Transfer bytes from in to out
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            }
+        }
     }
 }

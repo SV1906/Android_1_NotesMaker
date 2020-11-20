@@ -1,0 +1,24 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:key="Cloud" app:title="Cloud">
+
+        <SwitchPreferenceCompat
+            app:key="CloudUpload"
+            app:title="Upload to Cloud"
+            app:summary="Enable this option to upload files to cloud storage"/>
+
+        <SwitchPreferenceCompat
+            app:key="LocalStorage"
+            app:title="Don't save on Device"
+            app:summary="Enabling this will result in documents only being stored on the cloud storage."/>
+
+<!--        <ListPreference-->
+<!--            app:entries="@array/reply_entries"-->
+<!--            app:entryValues="@array/reply_values"-->
+<!--            app:key="Storage"-->
+<!--            app:title= "Storage"-->
+<!--            app:useSimpleSummaryProvider="true" />-->
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

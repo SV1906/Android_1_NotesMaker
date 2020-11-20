@@ -17,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -95,7 +97,6 @@ class PdfListAdapter extends RecyclerView.Adapter<PdfListAdapter.PdfViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull PdfViewHolder holder, int position) {
         holder.pdfName.setText(moviesList.get(position).getName());
-
     }
 
     @Override

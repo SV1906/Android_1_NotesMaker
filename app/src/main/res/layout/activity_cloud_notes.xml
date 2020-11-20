@@ -6,6 +6,20 @@
     android:layout_height="match_parent"
     tools:context=".CloudNotes">
 
+
+    <TextView
+        android:id="@+id/cloudMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="You're not logged in. \n You need an account to save \nthe documents to a cloud storage."
+        android:textAlignment="center"
+        android:textColor="@color/defaultTextColor"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/cloudListRefresh"
+        app:layout_constraintTop_toTopOf="@+id/cloudListRefresh" />
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/cloudListRefresh"
         android:layout_width="match_parent"

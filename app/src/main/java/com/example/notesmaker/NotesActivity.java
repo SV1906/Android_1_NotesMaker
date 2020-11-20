@@ -3,9 +3,11 @@ package com.example.notesmaker;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,13 +36,16 @@ import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.ui.AppBarConfiguration;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -50,10 +55,12 @@ import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextDetector;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.ml.quaterion.text2summary.Text2Summary;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -116,6 +123,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
+
 
         if (mUser!=null){
             storage = FirebaseStorage.getInstance();
@@ -459,7 +467,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         }
     }
 
-    private void saveToPDF(String text, String name) {
+    private void saveToPDF(String text, String name) throws IOException {
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
 
             if(text.isEmpty())
@@ -471,18 +479,18 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
                 PDF pdf = new PDF();
                 pdf.addParagraph(text);
-                File file = pdf.makeDocument(path, name);
+                File temp = File.createTempFile(name, ".pdf", getCacheDir());
+                final File file = pdf.makeDocument(temp);
 
                 if (mUser!=null){
                     if (file != null){
                         StorageReference tempFile = pdfStorage.child(file.getName());
                         tempFile.putFile(Uri.fromFile(file)).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
 
-                            }
-                        });
-                        Log.i("Cloud", "Uploaded");
+                                }
+                            });
                     }
                 }
                 Toast.makeText(this, "Note Saved as a PDF in " + path, Toast.LENGTH_SHORT).show();
@@ -524,7 +532,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
                 Toast.makeText(this, "Sync", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_settings:
-                Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
                 break;
             case R.id.nav_logout:
                 if(menuItem.getTitle()=="Log Out")

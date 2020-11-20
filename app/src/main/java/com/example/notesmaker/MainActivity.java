@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,8 +25,9 @@ import com.google.firebase.auth.FirebaseUser;
 public class MainActivity extends AppCompatActivity {
 
     EditText lEmailId, lPassword;
-    Button Login, ForgotPassword, NewAcc;
+    Button Login, ForgotPassword, NewAcc,Resend;
     FirebaseAuth fAuth;
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +38,51 @@ public class MainActivity extends AppCompatActivity {
         Login = findViewById(R.id.button_login);
         ForgotPassword = findViewById(R.id.button_forgotPwd) ;
         NewAcc = findViewById(R.id.button_newAcc) ;
+        Resend = findViewById(R.id.button_resend);
         fAuth = FirebaseAuth.getInstance();
+        //Resend = findViewById(R.id.button3);
+
+        Resend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String userId = fAuth.getCurrentUser().getUid();
+                FirebaseUser user = fAuth.getCurrentUser();
+                user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                      @Override
+                                                                      public void onSuccess(Void aVoid) {
+                                                                          Toast.makeText(MainActivity.this, "Verification Message has been sent", Toast.LENGTH_LONG).show();
+                                                                      }
+                                                                  }
+                ).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "On Failure: Message not sent" + e.getMessage());
+                        Toast.makeText(MainActivity.this, "Verification Message not sent", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+
+        Resend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String userId = fAuth.getCurrentUser().getUid();
+                FirebaseUser user = fAuth.getCurrentUser();
+                user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                      @Override
+                                                                      public void onSuccess(Void aVoid) {
+                                                                          Toast.makeText(MainActivity.this, "Verification Message has been sent", Toast.LENGTH_LONG).show();
+                                                                      }
+                                                                  }
+                ).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "On Failure: Message not sent" + e.getMessage());
+                        Toast.makeText(MainActivity.this, "Verification Message not sent", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
 
         NewAcc.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,7 +116,23 @@ public class MainActivity extends AppCompatActivity {
                                   String userId = fAuth.getCurrentUser().getUid();
                                   FirebaseUser user = fAuth.getCurrentUser();
                                   if(!user.isEmailVerified()){
+
+                                     // Toast.makeText(MainActivity.this, "Email isn't verified, try again after verification of Email ", Toast.LENGTH_LONG).show();
+                                      Resend.setVisibility(View.VISIBLE);
+                                      AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                                      builder.setTitle("Email ID not verified!");
+                                      builder.setMessage("Please verify your Email ID and try again later")
+                                              .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                                  public void onClick(DialogInterface dialog, int id) {
+                                                      // FIRE ZE MISSILES!
+                                                  }
+                                              });
+                                      builder.show();
+
                                       Toast.makeText(MainActivity.this, "Email isn't verified, try again after verification of Email ", Toast.LENGTH_LONG).show();
+                                      Resend.setVisibility(View.VISIBLE);
+
+
                                   }
                                   else {
                                       Toast.makeText(MainActivity.this, "You have Logged in", Toast.LENGTH_LONG).show();
@@ -102,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                     fAuth.sendPasswordResetEmail(mail).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Toast.makeText(MainActivity.this, "Reset Link sent to your Emai", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Reset Link sent to your Email", Toast.LENGTH_SHORT).show();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override

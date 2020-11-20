@@ -37,6 +37,7 @@ public class CloudNotes extends AppCompatActivity {
     RecyclerView cloudNotes;
     LinearLayoutManager linearLayoutManager;
     CloudFileAdapter cloudFileAdapter;
+    TextView cloudMessage;
 
     FirebaseAuth mAuth;
     FirebaseUser mUser;
@@ -53,17 +54,19 @@ public class CloudNotes extends AppCompatActivity {
         setContentView(R.layout.activity_cloud_notes);
 
         swipeRefreshLayout = findViewById(R.id.cloudListRefresh);
+        cloudMessage = findViewById(R.id.cloudMessage);
 
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
+
         if (mUser!=null){
+            cloudMessage.setVisibility(View.INVISIBLE);
             storage = FirebaseStorage.getInstance();
             pdfStorage = storage.getReference();
             pdfStorage = pdfStorage.child(mUser.getUid());
             pdfStorage = pdfStorage.child("PDFs");
             getFiles();
             swipeRefreshLayout.setEnabled(true);
-
 
             swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
@@ -74,6 +77,7 @@ public class CloudNotes extends AppCompatActivity {
             });
         } else {
             swipeRefreshLayout.setEnabled(false);
+            cloudMessage.setVisibility(View.VISIBLE);
         }
 
         cloudNotes = findViewById(R.id.cloudNotes);
