@@ -57,18 +57,5 @@
         android:text="New account"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
-    <Button
-        android:id="@+id/button_resend"
-        android:layout_width="104dp"
-        android:layout_height="wrap_content"
-        android:visibility="invisible"
-        android:text="Resend Verification" />
-
-<!--    <Button-->
-<!--        android:id="@+id/button3"-->
-<!--        android:layout_width="133dp"-->
-<!--        android:layout_height="71dp"-->
-<!--        android:text="Resend Verification"-->
-<!--        android:visibility="invisible" />-->
 </LinearLayout>
 

@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
@@ -46,7 +47,7 @@ class CloudFileAdapter extends RecyclerView.Adapter<CloudFileAdapter.ViewHolder>
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.single_cloud_item, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.pdf_item_layout, parent, false);
 
         return new ViewHolder(view);
     }
@@ -138,7 +139,7 @@ class CloudFileAdapter extends RecyclerView.Adapter<CloudFileAdapter.ViewHolder>
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView cloudFileName, cloudFileSize, cloudFileTime;
-        ImageButton cloudFileMenu;
+        Button cloudFileMenu;
         View mView;
 
         public ViewHolder(@NonNull View mItem) {
