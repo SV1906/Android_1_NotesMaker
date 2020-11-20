@@ -11,7 +11,7 @@
         android:id="@+id/register_text"
         android:layout_width="210dp"
         android:layout_height="50dp"
-        android:text="Registeration"
+        android:text="Registration"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
         android:textSize="30sp"
