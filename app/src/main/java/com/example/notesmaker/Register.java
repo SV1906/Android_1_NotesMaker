@@ -103,12 +103,12 @@ public class Register extends AppCompatActivity {
                                     user.delete();
                                 }
                             });
+                            fAuth.signOut();
                             Toast.makeText(Register.this, "User Created", Toast.LENGTH_LONG).show();
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         } else {
                             Toast.makeText(Register.this, "Error!" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }
-                        fAuth.signOut();
                     }
                 });
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
