@@ -29,7 +29,7 @@ public class HomeActivity extends AppCompatActivity {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                startActivity(new Intent(HomeActivity.this, MainActivity.class));
+                startActivity(new Intent(HomeActivity.this, NotesActivity.class));
                 finish();
             }
         }, 3000);
