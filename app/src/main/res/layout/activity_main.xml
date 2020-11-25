@@ -7,68 +7,111 @@
     android:orientation="vertical"
     android:padding="16dp"
     android:textStyle="bold"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="@drawable/main_background">
 
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        >
 
-    <TextView
-        android:layout_width="318dp"
-        android:layout_height="59dp"
-        android:layout_margin="20dp"
-        android:text="                 Login"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textSize="30dp"
-        android:textStyle="bold|italic" />
+        <LinearLayout
+            android:padding="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal">
+
+        <TextView
+                android:textColor="#000000"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="20dp"
+                android:text="Login"
+                android:textSize="30dp" />
 
     <EditText
 
         android:id="@+id/edit_text_emailId"
-        android:layout_width="388dp"
-        android:layout_height="63dp"
-        android:hint="Enter your Email Id"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:autofillHints="Username"
+        android:ems="10"
+        android:hint="Username"
         android:inputType="textEmailAddress"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+        />
 
     <EditText
         android:id="@+id/edit_text_password"
-        android:layout_width="388dp"
-        android:layout_height="67dp"
-        android:hint="Enter password"
-        android:inputType="textPassword"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword"/>
 
-    <Button
-        android:id="@+id/button_login"
-        android:layout_width="386dp"
-        android:layout_height="wrap_content"
-        android:text="Login"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
-    <Button
-        android:id="@+id/button_forgotPwd"
-        android:layout_width="386dp"
-        android:layout_height="wrap_content"
-        android:text="Forgot Password"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
-
-    <Button
-        android:id="@+id/button_newAcc"
-        android:layout_width="383dp"
-        android:layout_height="wrap_content"
-        android:text="New account"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
-    <Button
-        android:id="@+id/button_resend"
-        android:layout_width="104dp"
-        android:layout_height="wrap_content"
-        android:visibility="invisible"
-        android:text="Resend Verification" />
+            <TextView
+                android:layout_gravity="right"
+                android:id="@+id/button_forgotPwd"
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Forgot Password"
+                android:textStyle="bold"
+                android:clickable="true"/>
 
 <!--    <Button-->
-<!--        android:id="@+id/button3"-->
-<!--        android:layout_width="133dp"-->
-<!--        android:layout_height="71dp"-->
-<!--        android:text="Resend Verification"-->
-<!--        android:visibility="invisible" />-->
+<!--        android:id="@+id/button_login"-->
+<!--        android:layout_width="386dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Login"-->
+<!--        android:textAppearance="@style/TextAppearance.AppCompat.Large" />-->
+
+            <Button
+                android:id="@+id/button_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Login"
+                android:background="#6ca414"
+                android:layout_marginTop="16dp"
+                android:textStyle="bold"
+                android:textColor="#ffffff"
+                />
+<!--    <Button-->
+<!--        android:id="@+id/button_newAcc"-->
+<!--        android:layout_width="383dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Create your account"-->
+<!--        android:textAppearance="@style/TextAppearance.AppCompat.Large" />-->
+
+            <Button
+                android:textAllCaps="false"
+                android:id="@+id/button_newAcc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Create your account"
+                android:background="@android:color/transparent"
+                android:layout_marginTop="16dp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                />
+    <Button
+        android:id="@+id/button_resend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:text="Resend Verification"
+        android:background="@android:color/transparent"/>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
 </LinearLayout>
 
