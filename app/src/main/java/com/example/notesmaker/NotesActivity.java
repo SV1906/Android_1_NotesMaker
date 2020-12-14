@@ -232,7 +232,9 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                pdfListAdapter.getFilter().filter(newText);
+                if(pdfListAdapter != null) {
+                    pdfListAdapter.getFilter().filter(newText);
+                }
                 return false;
             }
         });
