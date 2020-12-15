@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/itembg"
     android:orientation="vertical"
     android:textAlignment="center"
-    android:weightSum="10"
+    android:weightSum="20"
     tools:context=".PreviewActivity">
 
     <LinearLayout
@@ -14,25 +15,26 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="TAP ON A PARAGRAPH TO EDIT IT"
-            android:textStyle="bold|italic"
-            android:textAlignment="center"/>
+            android:textAlignment="center"
+            android:textStyle="bold|italic" />
+
         <EditText
             android:id="@+id/prevEditTextTitle"
-            android:hint="Enter the name of PDF"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:hint="Enter the name of PDF" />
     </LinearLayout>
-
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="8">
+        android:layout_weight="17">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/previewRecyclerView"
@@ -44,7 +46,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:weightSum="2">
 
         <Button

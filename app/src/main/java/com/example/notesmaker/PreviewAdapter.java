@@ -7,10 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -33,9 +34,11 @@ public class PreviewAdapter extends RecyclerView.Adapter<PreviewAdapter.PreviewV
 
     public static class PreviewViewHolder extends RecyclerView.ViewHolder {
         public TextView mPreviewTextView;
-        public Button mSaveButton, mSummariseButton, mResetButton, mDeleteButton;
+        public Button mSaveButton, mSummariseButton, mResetButton;
+        public ImageButton mDeleteButton;
         public EditText mPreviewEditText;
-        public LinearLayout mPreviewLinearLayout;
+        //public LinearLayout mPreviewLinearLayout;
+        public ConstraintLayout mPreviewConstraintLayout;
 
         public PreviewViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
@@ -45,7 +48,7 @@ public class PreviewAdapter extends RecyclerView.Adapter<PreviewAdapter.PreviewV
             mResetButton = itemView.findViewById(R.id.prevLayoutReset);
             mDeleteButton = itemView.findViewById(R.id.prevLayoutDelete);
             mPreviewEditText = itemView.findViewById(R.id.prevEditText);
-            mPreviewLinearLayout = itemView.findViewById(R.id.prevLinearLayout);
+            mPreviewConstraintLayout = itemView.findViewById(R.id.prevEditTextLayout);
 
             mDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -106,14 +109,14 @@ public class PreviewAdapter extends RecyclerView.Adapter<PreviewAdapter.PreviewV
                 finalString = holder.mPreviewEditText.getText().toString();
                 mPreviewDataList.get(position).changeText(finalString);
                 holder.mPreviewTextView.setText(finalString);
-                holder.mPreviewLinearLayout.setVisibility(View.GONE);
+                holder.mPreviewConstraintLayout.setVisibility(View.GONE);
                 holder.mPreviewTextView.setVisibility(View.VISIBLE);
             }
         });
         holder.mPreviewTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                holder.mPreviewLinearLayout.setVisibility(View.VISIBLE);
+                holder.mPreviewConstraintLayout.setVisibility(View.VISIBLE);
                 holder.mPreviewTextView.setVisibility(View.GONE);
             }
         });
