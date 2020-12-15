@@ -24,7 +24,6 @@
             android:text="File Name"
             android:textColor="@color/defaultTextColor"
             android:textSize="18sp"
-            android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/cloudFileMenu"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
