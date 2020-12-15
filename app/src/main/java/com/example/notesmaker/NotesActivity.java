@@ -93,7 +93,6 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
     @Override
     protected void onStart() {
-
         checkAuthentication();
         super.onStart();
     }

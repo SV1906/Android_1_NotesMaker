@@ -4,21 +4,18 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -30,31 +27,33 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-class CloudFileAdapter extends RecyclerView.Adapter<CloudFileAdapter.ViewHolder> {
+class CloudFileAdapter extends RecyclerView.Adapter<CloudFileAdapter.ViewHolder> implements Filterable {
     private Context mContext;
+    private List<StorageReference> mFilteredList;
     private List<StorageReference> mList;
 
 
     public CloudFileAdapter(Context mContext, List<StorageReference> mList) {
         this.mContext = mContext;
         this.mList = mList;
+        this.mFilteredList = mList;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.pdf_item_layout, parent, false);
-
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        final StorageReference mFile = mList.get(position);
+        final StorageReference mFile = mFilteredList.get(position);
         holder.cloudFileName.setText(mFile.getName());
 
         mFile.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
@@ -133,8 +132,10 @@ class CloudFileAdapter extends RecyclerView.Adapter<CloudFileAdapter.ViewHolder>
 
     @Override
     public int getItemCount() {
-        return mList.size();
+        return mFilteredList.size();
     }
+
+
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -174,5 +175,36 @@ class CloudFileAdapter extends RecyclerView.Adapter<CloudFileAdapter.ViewHolder>
         dialog.show();
         return false;
     }
+
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+
+    Filter filter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<StorageReference> filteredList = new ArrayList<>();
+            if(constraint.toString().isEmpty()){
+                filteredList.addAll(mList);
+            }
+            else{
+                for(StorageReference movie: mList){
+                    if(movie.getName().toLowerCase().contains((constraint.toString().toLowerCase()))){
+                        filteredList.add(movie);
+                    }
+                }
+            }
+            FilterResults filterResults = new FilterResults();
+            filterResults.values =filteredList;
+            return filterResults;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            mFilteredList = (List<StorageReference>) results.values;
+            notifyDataSetChanged();
+        }
+    };
 
 }
