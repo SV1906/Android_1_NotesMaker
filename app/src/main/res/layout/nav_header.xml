@@ -9,8 +9,6 @@
     android:id="@+id/navHeader"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-
-
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/userProfilePhoto"
         android:layout_width="80dp"
