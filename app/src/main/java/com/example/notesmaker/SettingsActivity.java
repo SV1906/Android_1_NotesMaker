@@ -62,6 +62,8 @@ public class SettingsActivity extends AppCompatActivity {
                 localStorage.setEnabled(false);
             }
 
+
+
             preferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
                 @Override
                 public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -85,4 +87,9 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 }
