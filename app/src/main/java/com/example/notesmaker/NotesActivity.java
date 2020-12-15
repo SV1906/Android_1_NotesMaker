@@ -127,6 +127,8 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
 
+        checkPermission();
+
 
         if (mUser!=null){
             storage = FirebaseStorage.getInstance();
@@ -168,7 +170,9 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CropImage.startPickImageActivity(NotesActivity.this);
+                if (checkPermission()){
+                    CropImage.startPickImageActivity(NotesActivity.this);
+                }
             }
         });
 
@@ -181,6 +185,19 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 //                startActivityForResult(myFileIntent, REQUEST_CODE_SELECT_DOC);
 //            }
 //        });
+    }
+
+    private boolean checkPermission(){
+        if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(
+                    NotesActivity.this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    REQUEST_CODE_STORAGE_PERMISSION
+            );
+        } else {
+            return true;
+        }
+        return false;
     }
 
     private void updateHeader() {
@@ -309,7 +326,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
         if(requestCode == REQUEST_CODE_STORAGE_PERMISSION && grantResults.length>0)
         {
-            selectImage();
+            initRecyclerView();
         }
         else
         {
