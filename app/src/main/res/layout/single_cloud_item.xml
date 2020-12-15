@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/cloudFileSize"
+        android:id="@+id/cloudFileTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -46,7 +46,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/cloudFileTime"
+        android:id="@+id/cloudFileSize"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -54,9 +54,9 @@
         android:paddingBottom="5dp"
         android:text="TextView"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/cloudFileSize"
+        app:layout_constraintBottom_toBottomOf="@+id/cloudFileTime"
         app:layout_constraintEnd_toStartOf="@+id/divider4"
-        app:layout_constraintTop_toTopOf="@+id/cloudFileSize"
+        app:layout_constraintTop_toTopOf="@+id/cloudFileTime"
         app:layout_constraintVertical_bias="0.0" />
 
     <View

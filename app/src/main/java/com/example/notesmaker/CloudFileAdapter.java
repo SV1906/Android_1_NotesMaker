@@ -146,8 +146,8 @@ class CloudFileAdapter extends RecyclerView.Adapter<CloudFileAdapter.ViewHolder>
         public ViewHolder(@NonNull View mItem) {
             super(mItem);
             cloudFileName =mItem.findViewById(R.id.cloudFileName);
-            cloudFileSize = mItem.findViewById(R.id.cloudFileSize);
-            cloudFileTime = mItem.findViewById(R.id.cloudFileTime);
+            cloudFileSize = mItem.findViewById(R.id.cloudFileTime);
+            cloudFileTime = mItem.findViewById(R.id.cloudFileSize);
             cloudFileMenu = mItem.findViewById(R.id.cloudFileMenu);
 
             mView = mItem;

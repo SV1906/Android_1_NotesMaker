@@ -1,8 +1,6 @@
 package com.example.notesmaker;
 
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
@@ -22,13 +19,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
-
-import static androidx.core.content.ContextCompat.startActivity;
 
 class PdfListAdapter extends RecyclerView.Adapter<PdfListAdapter.PdfViewHolder> implements Filterable {
 
@@ -133,8 +126,8 @@ class PdfListAdapter extends RecyclerView.Adapter<PdfListAdapter.PdfViewHolder> 
             super(itemView);
 
             pdfName = itemView.findViewById(R.id.cloudFileName);
-            pdfDate = itemView.findViewById(R.id.cloudFileSize);
-            pdfSize = itemView.findViewById(R.id.cloudFileTime);
+            pdfDate = itemView.findViewById(R.id.cloudFileTime);
+            pdfSize = itemView.findViewById(R.id.cloudFileSize);
             dotBtn = itemView.findViewById(R.id.cloudFileMenu);
 
             dotBtn.setOnClickListener(new View.OnClickListener() {
