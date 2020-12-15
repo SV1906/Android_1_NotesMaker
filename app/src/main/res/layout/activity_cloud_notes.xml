@@ -30,7 +30,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:layout_editor_absoluteX="241dp"
-            tools:layout_editor_absoluteY="254dp" />
+            tools:layout_editor_absoluteY="254dp"
+            android:background="@color/itembg"/>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
