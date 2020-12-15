@@ -1,6 +1,7 @@
 package com.example.notesmaker;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -80,6 +81,11 @@ public class CloudNotes extends AppCompatActivity {
             cloudMessage.setVisibility(View.VISIBLE);
         }
 
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         cloudNotes = findViewById(R.id.cloudNotes);
         linearLayoutManager = new LinearLayoutManager(this);
 
@@ -120,4 +126,9 @@ public class CloudNotes extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 }

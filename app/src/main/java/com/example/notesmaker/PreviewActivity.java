@@ -200,6 +200,18 @@ public class PreviewActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     }
+                } else {
+                    File dir;
+
+                    dir = new File(path);
+                    if(!dir.exists())
+                        dir.mkdirs();
+                    File finalPDF = new File(path, name + ".pdf");
+                    try {
+                        copy(file, finalPDF);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
                 Toast.makeText(this, "Note Saved as a PDF in " + path, Toast.LENGTH_SHORT).show();
 
