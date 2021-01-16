@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,7 +25,8 @@ import com.google.firebase.auth.FirebaseUser;
 public class MainActivity extends AppCompatActivity {
 
     EditText lEmailId, lPassword;
-    Button Login, ForgotPassword, NewAcc;
+    Button Login, NewAcc;
+    TextView ForgotPassword;
     FirebaseAuth fAuth;
     FirebaseUser user;
 

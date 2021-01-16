@@ -7,7 +7,6 @@
     android:layout_marginTop="1dp"
     android:layout_marginBottom="2dp"
     android:padding="10dp"
-    app:cardBackgroundColor="@color/itembg"
     app:cardCornerRadius="5dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -24,7 +23,6 @@
             android:text="File Name"
             android:textColor="@color/defaultTextColor"
             android:textSize="18sp"
-            android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/cloudFileMenu"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

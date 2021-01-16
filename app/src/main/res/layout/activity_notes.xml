@@ -18,7 +18,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary"
+            android:background="@color/appbar"
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
@@ -31,41 +31,23 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/pdfList"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:background="@color/itembg"/>
 
-            <com.getbase.floatingactionbutton.FloatingActionsMenu
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/add"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
-                android:layout_margin="10dp"
-                app:fab_addButtonColorNormal="@color/pink"
-                app:fab_addButtonColorPressed="@color/pink_pressed"
-                app:fab_addButtonPlusIconColor="@color/white"
-                app:fab_labelStyle="@style/custom_fab"
-                android:layout_alignParentRight="true">
-
-                <com.getbase.floatingactionbutton.FloatingActionButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:fab_colorNormal="@color/white"
-                    app:fab_colorPressed="@color/white_pressed"
-                    app:fab_size="mini"
-                    app:fab_icon="@drawable/ic_baseline_add_photo_alternate_24"
-                    android:id="@+id/fab_image"
-                    app:fab_title="Add a note from Image"/>
-
-                <com.getbase.floatingactionbutton.FloatingActionButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:fab_colorNormal="@color/white"
-                    app:fab_colorPressed="@color/white_pressed"
-                    app:fab_size="mini"
-                    app:fab_icon="@drawable/ic_baseline_add_a_photo_24"
-                    android:id="@+id/fab_cam"
-                    app:fab_title="Add a note from camera"/>
-
-            </com.getbase.floatingactionbutton.FloatingActionsMenu>
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                app:fab_colorNormal="@color/pink"
+                app:fab_colorPressed="@color/pink_pressed"
+                app:fab_icon="@drawable/ic_baseline_add_24" />
 
         </RelativeLayout>
 

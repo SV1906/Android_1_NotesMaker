@@ -157,7 +157,9 @@ public class PreviewActivity extends AppCompatActivity {
                 pdf.addParagraph(text);
                 File temp = null;
                 try {
-                    temp = File.createTempFile(name, ".pdf", getCacheDir());
+                    String tempName = name;
+                    if (name.length()<=3){tempName=name+"111";}
+                    temp = File.createTempFile(tempName, ".pdf", getCacheDir());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

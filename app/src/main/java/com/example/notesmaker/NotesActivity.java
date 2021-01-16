@@ -1,6 +1,7 @@
 package com.example.notesmaker;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -57,6 +58,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.ml.quaterion.text2summary.Text2Summary;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -78,6 +81,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
     ImageView pfp; //Profile Photo
     TextView username, userEmail;
+    private Uri imgUri;
 
     NavigationView navigationView;
     RecyclerView PDFList;
@@ -123,6 +127,8 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
 
+        checkPermission();
+
 
         if (mUser!=null){
             storage = FirebaseStorage.getInstance();
@@ -133,7 +139,6 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
         PDFList = findViewById(R.id.pdfList);
         initRecyclerView();
-
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -146,7 +151,6 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         pfp = header.findViewById(R.id.userProfilePhoto);
         username = header.findViewById(R.id.username);
         userEmail = header.findViewById(R.id.userEmail);
-
 
 
         navigationView.setNavigationItemSelectedListener(this);
@@ -162,35 +166,12 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
 
 
-        FloatingActionButton camFab = findViewById(R.id.fab_cam);
-        camFab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton add = findViewById(R.id.add);
+        add.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                // amey let ur code go here...
-                {
-                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                    }
-                }
-
-            }
-        });
-
-        FloatingActionButton imgFab = findViewById(R.id.fab_image);
-        imgFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
-                    ActivityCompat.requestPermissions(
-                            NotesActivity.this,
-                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                            REQUEST_CODE_STORAGE_PERMISSION
-                    );
-                }
-                else
-                {
-                    selectImage();
+            public void onClick(View v) {
+                if (checkPermission()){
+                    CropImage.startPickImageActivity(NotesActivity.this);
                 }
             }
         });
@@ -204,6 +185,19 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 //                startActivityForResult(myFileIntent, REQUEST_CODE_SELECT_DOC);
 //            }
 //        });
+    }
+
+    private boolean checkPermission(){
+        if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(
+                    NotesActivity.this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    REQUEST_CODE_STORAGE_PERMISSION
+            );
+        } else {
+            return true;
+        }
+        return false;
     }
 
     private void updateHeader() {
@@ -332,7 +326,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
         if(requestCode == REQUEST_CODE_STORAGE_PERMISSION && grantResults.length>0)
         {
-            selectImage();
+            initRecyclerView();
         }
         else
         {
@@ -344,40 +338,32 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            getTextFromBitmap(imageBitmap);
+        if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == Activity.RESULT_OK){
+            Uri imageUri = CropImage.getPickImageResultUri(this, data);
+            imgUri = imageUri;
+            startCrop(imageUri);
         }
-
-
-        if (requestCode == REQUEST_CODE_SELECT_IMAGE && resultCode == RESULT_OK) {
-            if (data != null) {
-
-                Uri selectedImageUri = data.getData();
-                if (selectedImageUri != null) {
-                    InputStream inputStream = null;
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if(resultCode == RESULT_OK){
+                imgUri = result.getUri();
+                if (imgUri != null) {
                     try {
-                        inputStream = getContentResolver().openInputStream(selectedImageUri);
+                        InputStream inputStream = getContentResolver().openInputStream(imgUri);
                         Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-//                        varun u can get the bitmap from here for ocr...
                         getTextFromBitmap(bitmap);
-
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
-                        Toast.makeText(this, "Exception" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-
                 }
-
+                Toast.makeText(this, "Image captured successfully !", Toast.LENGTH_SHORT).show();
             }
         }
 
-        if(requestCode == REQUEST_CODE_SELECT_DOC && resultCode == RESULT_OK){
-            // doc code will go here ...
+    }
 
-        }
-
+    private void startCrop(Uri imageUri) {
+        CropImage.activity(imageUri).setGuidelines(CropImageView.Guidelines.ON).setMultiTouchEnabled(true).start(this);
     }
 
     private void getTextFromBitmap(Bitmap imageBitmap) {
