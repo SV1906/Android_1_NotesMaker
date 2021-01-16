@@ -19,11 +19,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PreviewActivity"/>
+        <activity android:name=".preview.PreviewActivity"/>
 
-        <activity android:name=".PdfActivity"/>
+        <activity android:name=".pdf.PdfActivity"/>
         <activity
-            android:name=".HomeActivity"
+            android:name=".SplashActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,8 +31,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Register" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".LoginActivity" />
         <activity android:name=".SettingsActivity"/>
         <activity
             android:name=".PDF"
@@ -42,7 +42,7 @@
 
         </activity>
         <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"/>
-        <activity android:name=".CloudNotes"/>
+        <activity android:name=".cloud.CloudNotes"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"

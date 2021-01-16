@@ -1,9 +1,5 @@
 package com.example.notesmaker;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -14,6 +10,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -26,16 +27,15 @@ import com.theartofdev.edmodo.cropper.CropImage;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class Register extends AppCompatActivity {
-    private static final int SELECT_PICTURE = 0;
+public class RegisterActivity extends AppCompatActivity {
     public static final int PIC_CROP = 1;
+    private static final int SELECT_PICTURE = 0;
+    private static final String TAG = "Register";
     EditText rCodeEnter, rEmailId, rPassword, rName;
     CircleImageView profilePicture;
     Uri pfp; //profile Picture
     FirebaseAuth fAuth;
     Button Next;
-    private static final String TAG = "Register";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,31 +85,31 @@ public class Register extends AppCompatActivity {
                             final FirebaseUser user = fAuth.getCurrentUser();
                             user.sendEmailVerification()
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Toast.makeText(Register.this, "Verification Message has been sent", Toast.LENGTH_LONG).show();
-                                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                                    .setDisplayName(rName.getText().toString())
-                                                    .setPhotoUri(pfp)
-                                                    .build();
-                                            user.updateProfile(profileUpdates);
-                                        }
-                                    }
-                            ).addOnFailureListener(new OnFailureListener() {
+                                                              @Override
+                                                              public void onSuccess(Void aVoid) {
+                                                                  Toast.makeText(RegisterActivity.this, "Verification Message has been sent", Toast.LENGTH_LONG).show();
+                                                                  UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                                                          .setDisplayName(rName.getText().toString())
+                                                                          .setPhotoUri(pfp)
+                                                                          .build();
+                                                                  user.updateProfile(profileUpdates);
+                                                              }
+                                                          }
+                                    ).addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
                                     Log.d(TAG, "On Failure: Message not sent" + e.getMessage());
-                                    Toast.makeText(Register.this, "Verification Message not sent", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(RegisterActivity.this, "Verification Message not sent", Toast.LENGTH_LONG).show();
                                     user.delete();
                                 }
                             });
                             fAuth.signOut();
-                            Toast.makeText(Register.this, "User Created", Toast.LENGTH_LONG).show();
-                            Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
+                            Toast.makeText(RegisterActivity.this, "User Created", Toast.LENGTH_LONG).show();
+                            Intent mainIntent = new Intent(getApplicationContext(), LoginActivity.class);
                             mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(mainIntent);
                         } else {
-                            Toast.makeText(Register.this, "Error!" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(RegisterActivity.this, "Error!" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -118,21 +118,11 @@ public class Register extends AppCompatActivity {
         });
     }
 
-    public class SelectImage implements View.OnClickListener{
-        @Override
-        public void onClick(View v) {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK){
-            if (requestCode == SELECT_PICTURE){
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == SELECT_PICTURE) {
                 Uri image = data.getData();
 
                 CropImage.activity(image)
@@ -149,6 +139,16 @@ public class Register extends AppCompatActivity {
                     Exception error = result.getError();
                 }
             }
+        }
+    }
+
+    public class SelectImage implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
         }
     }
 }

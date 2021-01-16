@@ -1,4 +1,4 @@
-package com.example.notesmaker;
+package com.example.notesmaker.cloud;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -18,6 +18,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.notesmaker.pdf.PdfActivity;
+import com.example.notesmaker.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.StorageMetadata;
@@ -33,10 +35,33 @@ import java.util.List;
 import java.util.TimeZone;
 
 class CloudFileAdapter extends RecyclerView.Adapter<CloudFileAdapter.ViewHolder> implements Filterable {
-    private Context mContext;
+    private final Context mContext;
     private List<StorageReference> mFilteredList;
-    private List<StorageReference> mList;
+    private final List<StorageReference> mList;
+    Filter filter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<StorageReference> filteredList = new ArrayList<>();
+            if (constraint.toString().isEmpty()) {
+                filteredList.addAll(mList);
+            } else {
+                for (StorageReference movie : mList) {
+                    if (movie.getName().toLowerCase().contains((constraint.toString().toLowerCase()))) {
+                        filteredList.add(movie);
+                    }
+                }
+            }
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredList;
+            return filterResults;
+        }
 
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            mFilteredList = (List<StorageReference>) results.values;
+            notifyDataSetChanged();
+        }
+    };
 
     public CloudFileAdapter(Context mContext, List<StorageReference> mList) {
         this.mContext = mContext;
@@ -59,11 +84,11 @@ class CloudFileAdapter extends RecyclerView.Adapter<CloudFileAdapter.ViewHolder>
         mFile.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
             @Override
             public void onSuccess(StorageMetadata storageMetadata) {
-            Date date = new Date(storageMetadata.getCreationTimeMillis());
-            DateFormat formatter = new SimpleDateFormat("dd/MM/yy  HH:mm:ss");
-            formatter.setTimeZone(TimeZone.getDefault());
-            holder.cloudFileSize.setText(formatter.format(date));
-            holder.cloudFileTime.setText(getSize(storageMetadata.getSizeBytes()));
+                Date date = new Date(storageMetadata.getCreationTimeMillis());
+                DateFormat formatter = new SimpleDateFormat("dd/MM/yy  HH:mm:ss");
+                formatter.setTimeZone(TimeZone.getDefault());
+                holder.cloudFileSize.setText(formatter.format(date));
+                holder.cloudFileTime.setText(getSize(storageMetadata.getSizeBytes()));
             }
         });
 
@@ -94,25 +119,24 @@ class CloudFileAdapter extends RecyclerView.Adapter<CloudFileAdapter.ViewHolder>
         holder.cloudFileMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    PopupMenu popupMenu = new PopupMenu(v.getContext(), v);
-                    popupMenu.inflate(R.menu.cloud_file_menu);
-                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            switch(item.getItemId())
-                            {
-                                case R.id.men_share:
-                                    ((CloudNotes)mContext).shareNote(mFile);
-                                    break;
+                PopupMenu popupMenu = new PopupMenu(v.getContext(), v);
+                popupMenu.inflate(R.menu.cloud_file_menu);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.men_share:
+                                ((CloudNotes) mContext).shareNote(mFile);
+                                break;
 
-                                case R.id.men_delete:
-                                    deleteFile(mFile);
-                                    break;
-                            }
-                            return false;
+                            case R.id.men_delete:
+                                deleteFile(mFile);
+                                break;
                         }
-                    });
-                    popupMenu.show();
+                        return false;
+                    }
+                });
+                popupMenu.show();
             }
         });
     }
@@ -122,10 +146,10 @@ class CloudFileAdapter extends RecyclerView.Adapter<CloudFileAdapter.ViewHolder>
         long KB = 1024L;
 
         String size = (sizeBytes) + "Bytes";
-        if (sizeBytes>(2*MB)){
-            size = (sizeBytes/MB) + "MB";
-        }else if (sizeBytes>(2*KB)){
-            size = (sizeBytes/KB) + "KB";
+        if (sizeBytes > (2 * MB)) {
+            size = (sizeBytes / MB) + "MB";
+        } else if (sizeBytes > (2 * KB)) {
+            size = (sizeBytes / KB) + "KB";
         }
         return size;
     }
@@ -135,26 +159,7 @@ class CloudFileAdapter extends RecyclerView.Adapter<CloudFileAdapter.ViewHolder>
         return mFilteredList.size();
     }
 
-
-
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView cloudFileName, cloudFileSize, cloudFileTime;
-        Button cloudFileMenu;
-        View mView;
-
-        public ViewHolder(@NonNull View mItem) {
-            super(mItem);
-            cloudFileName =mItem.findViewById(R.id.cloudFileName);
-            cloudFileSize = mItem.findViewById(R.id.cloudFileTime);
-            cloudFileTime = mItem.findViewById(R.id.cloudFileSize);
-            cloudFileMenu = mItem.findViewById(R.id.cloudFileMenu);
-
-            mView = mItem;
-        }
-    }
-
-    private boolean deleteFile(final StorageReference storageReference){
+    private boolean deleteFile(final StorageReference storageReference) {
         AlertDialog dialog = new AlertDialog.Builder(mContext)
                 .setTitle("Delete File on Cloud")
                 .setMessage("Once you delete this file it will disappear forever.\n Are you sure you want to delete?")
@@ -165,7 +170,7 @@ class CloudFileAdapter extends RecyclerView.Adapter<CloudFileAdapter.ViewHolder>
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Toast.makeText(mContext, "File Deleted Successfully", Toast.LENGTH_SHORT).show();
-                                ((CloudNotes)mContext).getFiles();
+                                ((CloudNotes) mContext).getFiles();
                             }
                         });
                     }
@@ -181,30 +186,20 @@ class CloudFileAdapter extends RecyclerView.Adapter<CloudFileAdapter.ViewHolder>
         return filter;
     }
 
-    Filter filter = new Filter() {
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            List<StorageReference> filteredList = new ArrayList<>();
-            if(constraint.toString().isEmpty()){
-                filteredList.addAll(mList);
-            }
-            else{
-                for(StorageReference movie: mList){
-                    if(movie.getName().toLowerCase().contains((constraint.toString().toLowerCase()))){
-                        filteredList.add(movie);
-                    }
-                }
-            }
-            FilterResults filterResults = new FilterResults();
-            filterResults.values =filteredList;
-            return filterResults;
-        }
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        public TextView cloudFileName, cloudFileSize, cloudFileTime;
+        Button cloudFileMenu;
+        View mView;
 
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            mFilteredList = (List<StorageReference>) results.values;
-            notifyDataSetChanged();
+        public ViewHolder(@NonNull View mItem) {
+            super(mItem);
+            cloudFileName = mItem.findViewById(R.id.cloudFileName);
+            cloudFileSize = mItem.findViewById(R.id.cloudFileTime);
+            cloudFileTime = mItem.findViewById(R.id.cloudFileSize);
+            cloudFileMenu = mItem.findViewById(R.id.cloudFileMenu);
+
+            mView = mItem;
         }
-    };
+    }
 
 }

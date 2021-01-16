@@ -4,11 +4,9 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,7 +16,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -37,16 +34,17 @@ import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.ui.AppBarConfiguration;
-import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
+import com.example.notesmaker.cloud.CloudNotes;
+import com.example.notesmaker.pdf.PDF;
+import com.example.notesmaker.pdf.PdfActivity;
+import com.example.notesmaker.pdf.PdfListAdapter;
+import com.example.notesmaker.preview.PreviewActivity;
 import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -56,7 +54,6 @@ import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextDetector;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.ml.quaterion.text2summary.Text2Summary;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -69,31 +66,27 @@ import java.util.List;
 
 import kotlin.jvm.internal.Ref.ObjectRef;
 
-public class NotesActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class NotesActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    static final int REQUEST_IMAGE_CAPTURE = 2;
     private static final int REQUEST_CODE_STORAGE_PERMISSION = 1;
     private static final int REQUEST_CODE_SELECT_IMAGE = 1;
     private static final int REQUEST_CODE_SELECT_DOC = 10;
-    static final int REQUEST_IMAGE_CAPTURE = 2;
-
-    private DrawerLayout drawer;
-    private AppBarConfiguration mAppBarConfiguration;
-
+    public static FirebaseAuth mAuth;
+    public static StorageReference pdfStorage;
     ImageView pfp; //Profile Photo
     TextView username, userEmail;
-    private Uri imgUri;
-
     NavigationView navigationView;
     RecyclerView PDFList;
     PdfListAdapter pdfListAdapter;
     LinearLayoutManager linearLayoutManager;
     File[] allPdfList;
-
-    public static FirebaseAuth mAuth;
     FirebaseUser mUser;
     FirebaseStorage storage;
     StorageReference userStorage;
-    public static StorageReference pdfStorage;
+    private DrawerLayout drawer;
+    private AppBarConfiguration mAppBarConfiguration;
+    private Uri imgUri;
 
     @Override
     protected void onStart() {
@@ -107,13 +100,10 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         MenuItem login = menu.findItem(R.id.nav_logout);
 
         FirebaseUser mFirebaseUser = mAuth.getCurrentUser();
-        if(mFirebaseUser==null)
-        {
+        if (mFirebaseUser == null) {
             login.setTitle("Log In");
             login.setIcon(getResources().getDrawable(R.drawable.login));
-        }
-        else
-        {
+        } else {
             login.setTitle("Log Out");
             login.setIcon(getResources().getDrawable(R.drawable.logout));
         }
@@ -130,7 +120,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         checkPermission();
 
 
-        if (mUser!=null){
+        if (mUser != null) {
             storage = FirebaseStorage.getInstance();
             userStorage = storage.getReference();
             userStorage = userStorage.child(mUser.getUid());
@@ -155,7 +145,9 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
         navigationView.setNavigationItemSelectedListener(this);
 
-        if (mUser!=null){updateHeader();}
+        if (mUser != null) {
+            updateHeader();
+        }
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -163,14 +155,11 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         toggle.syncState();
 
 
-
-
-
         FloatingActionButton add = findViewById(R.id.add);
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkPermission()){
+                if (checkPermission()) {
                     CropImage.startPickImageActivity(NotesActivity.this);
                 }
             }
@@ -187,8 +176,8 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 //        });
     }
 
-    private boolean checkPermission(){
-        if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
+    private boolean checkPermission() {
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
                     NotesActivity.this,
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
@@ -204,7 +193,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         username.setText(mUser.getDisplayName());
         userEmail.setText(mUser.getEmail());
 
-        if (mUser.getPhotoUrl()!=null){
+        if (mUser.getPhotoUrl() != null) {
             pfp.setImageURI(mUser.getPhotoUrl());
 //            Glide.with(this)
 //                    .load(mUser.getPhotoUrl())
@@ -214,7 +203,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu , menu);
+        getMenuInflater().inflate(R.menu.main_menu, menu);
         MenuItem item = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) item.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -225,7 +214,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if(pdfListAdapter != null) {
+                if (pdfListAdapter != null) {
                     pdfListAdapter.getFilter().filter(newText);
                 }
                 return false;
@@ -271,14 +260,13 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
             PDFList.setLayoutManager(linearLayoutManager);
             PDFList.setAdapter(pdfListAdapter);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void deleteNote(final int position) {
-        if(allPdfList[position].exists())
-        {
+        if (allPdfList[position].exists()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(NotesActivity.this);
             builder.setMessage("Do you want to delete this Note?")
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -292,9 +280,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
                     .setNegativeButton("No", null);
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
-        }
-        else
-        {
+        } else {
             Toast.makeText(this, "ERROR", Toast.LENGTH_SHORT).show();
         }
     }
@@ -302,8 +288,8 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
     private File[] getPDFs(File[] allFiles) {
         int i = 0;
         File[] PDFs = new File[allFiles.length];
-        for(File f: allFiles){
-            if (f.isFile() && f.getPath().endsWith(".pdf")){
+        for (File f : allFiles) {
+            if (f.isFile() && f.getPath().endsWith(".pdf")) {
                 PDFs[i] = f;
                 i++;
             }
@@ -314,8 +300,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
     private void selectImage() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        if(intent.resolveActivity(getPackageManager())!=null)
-        {
+        if (intent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(intent, REQUEST_CODE_SELECT_IMAGE);
         }
     }
@@ -324,12 +309,9 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if(requestCode == REQUEST_CODE_STORAGE_PERMISSION && grantResults.length>0)
-        {
+        if (requestCode == REQUEST_CODE_STORAGE_PERMISSION && grantResults.length > 0) {
             initRecyclerView();
-        }
-        else
-        {
+        } else {
             Toast.makeText(this, "Permission Denied!!!", Toast.LENGTH_SHORT).show();
         }
     }
@@ -338,14 +320,14 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == Activity.RESULT_OK){
+        if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             Uri imageUri = CropImage.getPickImageResultUri(this, data);
             imgUri = imageUri;
             startCrop(imageUri);
         }
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if(resultCode == RESULT_OK){
+            if (resultCode == RESULT_OK) {
                 imgUri = result.getUri();
                 if (imgUri != null) {
                     try {
@@ -387,15 +369,15 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
     private void displayTextFromImage(FirebaseVisionText firebaseVisionText) {
         List<FirebaseVisionText.Block> blockList = firebaseVisionText.getBlocks();
         String text = "";
-        if(blockList.size() == 0){
+        if (blockList.size() == 0) {
             Toast.makeText(this, "No Text found in image", Toast.LENGTH_SHORT).show();
-        }else{
-            for (FirebaseVisionText.Block block : firebaseVisionText.getBlocks()){
-                 text += block.getText() + "\n";
+        } else {
+            for (FirebaseVisionText.Block block : firebaseVisionText.getBlocks()) {
+                text += block.getText() + "\n";
             }
 
-           // previewText(text);
-          //  Log.d("chk", text);
+            // previewText(text);
+            //  Log.d("chk", text);
             //Use the text from here aditya
 
             // Dialog box
@@ -454,13 +436,11 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
     }
 
     private void saveToPDF(String text, String name) throws IOException {
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 
-            if(text.isEmpty())
-            {
+            if (text.isEmpty()) {
                 Toast.makeText(this, "Nothing to save, Text is empty", Toast.LENGTH_SHORT).show();
-            }
-            else {
+            } else {
                 String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyPdf";
 
                 PDF pdf = new PDF();
@@ -468,15 +448,15 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
                 File temp = File.createTempFile(name, ".pdf", getCacheDir());
                 final File file = pdf.makeDocument(temp);
 
-                if (mUser!=null){
-                    if (file != null){
+                if (mUser != null) {
+                    if (file != null) {
                         StorageReference tempFile = pdfStorage.child(file.getName());
                         tempFile.putFile(Uri.fromFile(file)).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
 
-                                }
-                            });
+                            }
+                        });
                     }
                 }
                 Toast.makeText(this, "Note Saved as a PDF in " + path, Toast.LENGTH_SHORT).show();
@@ -485,19 +465,19 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
             }
 
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if(shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+            if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 AlertDialog.Builder alert = new AlertDialog.Builder(this);
                 alert.setTitle("Storage Permission Needed");
                 alert.setMessage("We need storage permission to store the PDF on your device. Please grant storage permission.");
                 alert.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 01);
+                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 01);
                     }
                 });
                 alert.show();
             } else {
-                requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 01);
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 01);
             }
         }
     }
@@ -507,7 +487,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         summary.element = Text2Summary.Companion.summarize(text, 0.4F);
         //  TV.setText((CharSequence)((String)summary.element));
 //        previewText((String)summary.element);
-        return (String)summary.element;
+        return (String) summary.element;
     }
 
     @Override
@@ -521,18 +501,15 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
                 startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
                 break;
             case R.id.nav_logout:
-                if(menuItem.getTitle()=="Log Out")
-                {
+                if (menuItem.getTitle() == "Log Out") {
                     mAuth.signOut();
                     Intent intent = getIntent();
                     finish();
                     startActivity(intent);
                     checkAuthentication();
                     break;
-                }
-                else
-                {
-                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                } else {
+                    startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                 }
                 break;
             case R.id.nav_read:
@@ -557,17 +534,16 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         // setting view
         builder.setView(mView);
 
-            // prevents off screen touches
+        // prevents off screen touches
         builder.setCancelable(false);
 
         builder.setPositiveButton("Rename", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 String finalText = renEdit.getText().toString() + ".pdf";
-                if(allPdfList[adapterPosition].exists())
-                {
-                    File from = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyPdf",allPdfList[adapterPosition].getName());
-                    File to = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyPdf",finalText);
+                if (allPdfList[adapterPosition].exists()) {
+                    File from = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyPdf", allPdfList[adapterPosition].getName());
+                    File to = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/MyPdf", finalText);
                     from.renameTo(to);
                 }
                 initRecyclerView();
@@ -597,7 +573,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 //        textView.setText(string);
 //   }
 
-    public void uploadFile(){
+    public void uploadFile() {
 
     }
 }

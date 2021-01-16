@@ -1,9 +1,10 @@
-package com.example.notesmaker;
-
-import androidx.appcompat.app.AppCompatActivity;
+package com.example.notesmaker.pdf;
 
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.notesmaker.R;
 import com.github.barteksc.pdfviewer.PDFView;
 
 import java.io.File;
