@@ -153,6 +153,7 @@ public class PreviewActivity extends AppCompatActivity {
     }
 
     private void saveToPDF(String text, String name) {
+
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 
             if (text.isEmpty()) {
